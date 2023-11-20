@@ -7,9 +7,6 @@ from class_and_function import *
 # pour le lancez, tapez pytest dans le terminal
 # pour lancer un test spécifique, tapez pytest -k <nom du test> dans le terminal
 
-#Gestion de la documentation avec Sphinx
-#pour générer la documentation, tapez make html dans le terminal
-# pip install sphinx
 
 
 ### Tests unitaires
@@ -74,4 +71,17 @@ def test_création_jeu():
     assert jeu.get_joueurs() == ["Alice", "Bob"]
     # Vérification de la méthode get_backlogs
     assert jeu.get_backlogs() == jeu.backlogs
+
+
+def test_regles():
+    """test de la classe Regles"""
+    # Création d'une règle
+    regles = Regles()
+    # Vérification des attributs
+    assert regles.mode == "Classique"
+    # Vérification de la méthode set_mode
+    regles.set_mode("Strictes")
+    assert regles.mode == "Strictes"
+    # Vérification de la méthode get_mode
+    assert regles.get_mode() == "Strictes"
 
