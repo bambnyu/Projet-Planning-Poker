@@ -1,5 +1,7 @@
 import pygame
 import sys
+import tkinter as tk
+from tkinter import filedialog
 
 from Jeu import *
 class Visual:
@@ -104,9 +106,22 @@ class Visual:
             self.screen.blit(text_surf, text_rect)
             y_offset += 30
         
+    def open_file_dialog(self):
+        """Opens a file dialog and returns the selected file path."""
+        import tkinter as tk
+        from tkinter import filedialog
+
+        # Hide the main Tkinter window
+        root = tk.Tk()
+        root.withdraw()
+
+        # Open the file dialog
+        file_path = filedialog.askopenfilename()
+        return file_path
         
     def rules_menu_loop(self):
         """Loop for the rules menu"""
+        
         if self.strictes_clicked:
             self.display_rule_description("strictes")
         elif self.moyenne_clicked:
@@ -147,6 +162,9 @@ class Visual:
     def load_menu_loop(self):
         """Loop for the load menu"""
         # Text input box properties
+        #wait 1 second
+        pygame.time.wait(100) # so it doesn't register the click on the load game button as a click on the start button
+        
         input_box = pygame.Rect(400, 225, 140, 40)  # x, y, width, height
         color_inactive = pygame.Color('lightskyblue3')
         color_active = pygame.Color('dodgerblue2')
@@ -157,6 +175,8 @@ class Visual:
 
         players = []  # List to store player names
         loop_keyboard = True
+        
+        file_path = None
 
         while loop_keyboard:
             for event in pygame.event.get():
@@ -195,9 +215,29 @@ class Visual:
             # Drawing the screen and buttons
             self.screen.fill(self.WHITE)
 
-            if self.draw_button("Load Game", self.button_start_y, self.GREY, self.GREEN):
-                print("Load Game clicked")
-                ## open file from your computer and load it in a variable
+            if file_path == None:
+                if self.draw_button("Load Game (none)", self.button_start_y, self.GREY, self.GREEN):
+                    print("Load Game clicked")
+                    ## open file from your computer and load it in a variable
+                    file_path = self.open_file_dialog()
+                    if file_path:
+                        print("Selected file:", file_path)
+                        # Here, you can call your method to load and process the game data from the selected file
+                    else:
+                        print("No file selected")
+                        file_path = None
+            else:
+                if self.draw_button("Load Game (done)", self.button_start_y, self.GREY, self.DARK_GREEN):
+                    print("Load Game clicked")
+                    ## open file from your computer and load it in a variable
+                    file_path = self.open_file_dialog()
+                    if file_path:
+                        print("Selected file:", file_path)
+                        # Here, you can call your method to load and process the game data from the selected file
+                    else:
+                        print("No file selected")
+                        file_path = None
+
                                               
             if self.draw_button("Start", self.button_start_y + 2 * self.button_gap, self.GREY, self.DARK_GREEN):    
                 print("Start clicked")
@@ -233,6 +273,8 @@ class Visual:
     def run(self):
         # Method for running the game
         pygame.init()
+        
+        
 
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption('Planning Poker Game')
@@ -257,6 +299,7 @@ class Visual:
                 self.load_menu_loop()
                 
             pygame.display.update()
+        
         pygame.quit()
         sys.exit()
         
