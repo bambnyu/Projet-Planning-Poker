@@ -1,11 +1,19 @@
 #from class_and_function import *
 
+import sys
+import os
+
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+
 from Jeu import *
+
 
 
 # Gestion des tests unitaires avec pytest
 # pip install pytest
-# pour le lancez, tapez pytest dans le terminal
+# pour le lancez, tapez pytest Classes/Test/test.py dans le terminal
 # pour lancer un test spécifique, tapez pytest -k <nom du test> dans le terminal
 
 
