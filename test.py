@@ -1,5 +1,6 @@
-from class_and_function import *
+#from class_and_function import *
 
+from Jeu import *
 
 
 # Gestion des tests unitaires avec pytest
