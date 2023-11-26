@@ -66,7 +66,7 @@ def test_création_jeu():
     jeu.ajouter_joueur(Joueur("Bob"))
     assert jeu.joueurs[1].get_nom() == "Bob"
     # Vérification de la méthode charger_backlog
-    jeu.charger_backlog("backlog.json")
+    jeu.charger_backlog("Backlogs/backlog.json")
     assert jeu.backlogs['backlogItems'][0]['taskId'] == "1"
     # Vérification de la méthode voter
     jeu.voter(jeu.backlogs['backlogItems'][0])
