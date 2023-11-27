@@ -7,11 +7,14 @@ from Jeu import *
 class Visual:
     def __init__(self):
         
+        self.jeu = Jeu()
         
         # Game state
         self.main_menu = True
         self.rules_menu = False
         self.load_menu = False
+        self.start_menu = False
+        self.createBacklog_menu = False
         
         #state variables for rules menu buttons
         self.strictes_clicked = True
@@ -198,7 +201,8 @@ class Visual:
                     if active:
                         if event.key == pygame.K_RETURN:
                             # Add the entered text to players list
-                            players.append(text)
+                            # players.append(text)
+                            self.jeu.ajouter_joueur(Joueur(text))
                             print("Added player:", text)  # For demonstration
                             text = ''  # Clear the text box after adding
                         elif event.key == pygame.K_BACKSPACE:
@@ -223,6 +227,7 @@ class Visual:
                     if file_path:
                         print("Selected file:", file_path)
                         # Here, you can call your method to load and process the game data from the selected file
+                        self.jeu.charger_backlog(file_path)
                     else:
                         print("No file selected")
                         file_path = None
@@ -234,6 +239,7 @@ class Visual:
                     if file_path:
                         print("Selected file:", file_path)
                         # Here, you can call your method to load and process the game data from the selected file
+                        self.jeu.charger_backlog(file_path)
                     else:
                         print("No file selected")
                         file_path = None
@@ -241,6 +247,14 @@ class Visual:
                                               
             if self.draw_button("Start", self.button_start_y + 2 * self.button_gap, self.GREY, self.DARK_GREEN):    
                 print("Start clicked")
+                if len(self.jeu.joueurs) > 0 and file_path != None:
+                    self.load_menu = False
+                    self.start_menu = True
+                    loop_keyboard = False
+                if len(self.jeu.joueurs) > 0:
+                    self.load_menu = False
+                    self.createBacklog_menu = True
+                    loop_keyboard = False
             if self.draw_button("Back to main menu", self.button_start_y + 3 * self.button_gap, self.GREY, self.GREEN):
                 self.load_menu = False
                 self.main_menu = True
@@ -250,6 +264,8 @@ class Visual:
             self.screen.blit(font.render("Add Player :", True, self.BLACK), (self.button_start_x-50, self.button_start_y + self.button_gap+15))    
             # at the bottom of the screen, display the list of players
             self.screen.blit(font.render("Players :", True, self.BLACK), (self.button_start_x-50, self.button_start_y + 4*self.button_gap+15))
+            # delete empty players
+            players = [joueur.get_nom() for joueur in self.jeu.joueurs]       
             wrapped_text = self.wrap_text(str(players), 78) # 20 characters per line
             y_offset = -20
             for line in wrapped_text:
@@ -263,6 +279,105 @@ class Visual:
             pygame.draw.rect(self.screen, color, input_box, 2)
 
             pygame.display.update()
+
+
+    def createBacklog_menu_loop(self):
+        """Loop for the create backlog menu"""
+        self.screen.fill(self.DARK_GREEN)
+        #### HERE WE NEED AN INPUT BOX TO ENTER THE DESCRIPTION OF BACKLOGS
+        ### and show the already created backlogs on the bottom of the screen
+        ### a button to go back to the main menu
+        ### a button to go to the start menu
+            # Input box setup
+        input_box = pygame.Rect(300, 200, 200, 60)  # x, y, width, height
+        color_inactive = pygame.Color('lightskyblue3')
+        color_active = pygame.Color('dodgerblue2')
+        color = color_inactive
+        active = False
+        text = ''
+        font = pygame.font.Font(None, 32)
+
+        backlog_description = ''
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                # Event handling for the input box
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if input_box.collidepoint(event.pos):
+                        active = not active
+                    else:
+                        active = False
+                    color = color_active if active else color_inactive
+
+                if event.type == pygame.KEYDOWN:
+                    if active:
+                        if event.key == pygame.K_RETURN:
+                            backlog_description = text
+                            self.jeu.ajouter_backlog((backlog_description))  # Add the backlog to your game object
+                            text = ''
+                        elif event.key == pygame.K_BACKSPACE:
+                            text = text[:-1]
+                        else:
+                            text += event.unicode
+
+            self.screen.fill(self.WHITE)
+
+            # Display existing backlogs
+            # This can be a loop displaying each backlog item. Here's a simple example:
+            y_offset = 150
+            for backlog in self.jeu.get_backlogs():
+                self.screen.blit(font.render(backlog['description'], True, self.BLACK), (50, y_offset))
+                y_offset += 40
+
+            # Navigation buttons
+            if self.draw_button("Back to main menu", self.screen_height - 120, self.GREY, self.GREEN):
+                self.createBacklog_menu = False
+                self.main_menu = True
+                break
+            if self.draw_button("Start Game", self.screen_height - 70, self.GREY, self.DARK_GREEN):
+                # enregistrer le backlog dans un fichier json
+                self.jeu.enregistrer_backlog("Backlogs/backlog.json")
+                
+                self.createBacklog_menu = False
+                self.start_menu = True
+                break
+
+            # Input box for new backlog
+            txt_surface = font.render(text, True, color)
+            width = max(200, txt_surface.get_width() + 10)
+            input_box.w = width
+            self.screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
+            pygame.draw.rect(self.screen, color, input_box, 2)
+
+            pygame.display.flip()
+        
+        
+    def start_menu_loop(self):
+        """Loop for the start menu"""
+        # make the background GREEN to indicate that the game has started
+        self.screen.fill(self.DARK_GREEN)
+        # open the backlog file and load the backlog in a variable
+        # create a white box on the top middle of the screen to display a backlog
+        backlog_box = pygame.Rect(0, 0, self.screen_width, 100)
+        pygame.draw.rect(self.screen, self.WHITE, backlog_box)
+        
+        # display the backlog description in the white box
+        small_text = pygame.font.Font("freesansbold.ttf", 20)
+        description = self.jeu.afficher_1_backlog(0)
+        text_surf, text_rect = self.text_objects(description, small_text)
+        text_rect.center = ((self.screen_width // 2), (50))
+        self.screen.blit(text_surf, text_rect)
+        
+        
+
+
+
+
+
 
     
     
@@ -292,6 +407,12 @@ class Visual:
                 
             elif self.load_menu:
                 self.load_menu_loop()
+                
+            elif self.start_menu:
+                self.start_menu_loop()
+                
+            elif self.createBacklog_menu:
+                self.createBacklog_menu_loop()
                 
             pygame.display.update()
         

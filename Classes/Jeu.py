@@ -49,7 +49,7 @@ class Jeu:
             precedent = joueur.get_carte() # on met à jour la valeur de la carte précédente
         return True
     
-    def enregistrer_backlog(self, fichier):
+    def enregistrer_backlog(self, fichier): 
         """Enregistre le backlog dans un fichier json"""
         with open(fichier, 'w') as f:
             json.dump(self.backlogs, f)
@@ -61,3 +61,23 @@ class Jeu:
         else : 
             print("Pour la tache ",self.backlogs['backlogItems']['description'], " la valeur est a determiner")
     
+    def afficher_1_backlog(self, i):
+        """Affiche le backlog"""
+        return ("Pour la tache : " + self.backlogs['backlogItems'][i]['description'])
+    
+    def ajouter_backlog(self, description):
+        """Ajoute un backlog"""
+        """Ajoute un backlog avec une description donnée."""
+        # Créer un nouvel élément de backlog
+        new_backlog_item = {
+            "description": description,
+            "difficulty": None  # ou toute autre valeur initiale par défaut
+        }
+
+        # Ajouter cet élément à la liste des backlogs
+        self.backlogs.append(new_backlog_item)
+        
+def enregistrer_backlog(self, fichier): 
+        """Enregistre le backlog dans un fichier json"""
+        with open(fichier, 'w') as f:
+            json.dump(self.backlogs, f)
