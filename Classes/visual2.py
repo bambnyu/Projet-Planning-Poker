@@ -340,11 +340,12 @@ class Visual:
                 break
             if self.draw_button("Start Game", self.screen_height - 70, self.GREY, self.DARK_GREEN):
                 # enregistrer le backlog dans un fichier json
-                self.jeu.enregistrer_backlog("Backlogs/backlog.json")
-                
-                self.createBacklog_menu = False
-                self.start_menu = True
-                break
+                if backlog_description:
+                    self.jeu.enregistrer_backlog("Backlogs/backlog.json")
+                    
+                    self.createBacklog_menu = False
+                    self.start_menu = True
+                    break
 
             # Input box for new backlog
             txt_surface = font.render(text, True, color)
