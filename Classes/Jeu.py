@@ -63,7 +63,7 @@ class Jeu:
     
     def afficher_1_backlog(self, i):
         """Affiche le backlog"""
-        return ("Pour la tache : " + self.backlogs['backlogItems'][i]['description'])
+        return ("Pour la tache : " + self.backlogs[i]['description'])
     
     def ajouter_backlog(self, description):
         """Ajoute un backlog"""
