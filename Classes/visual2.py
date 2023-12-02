@@ -16,6 +16,7 @@ class Visual:
         self.start_menu = False
         self.createBacklog_menu = False
         
+        
         #state variables for rules menu buttons
         self.strictes_clicked = True
         self.moyenne_clicked = False
@@ -356,23 +357,45 @@ class Visual:
 
             pygame.display.flip()
         
-        
     def start_menu_loop(self):
-        """Loop for the start menu"""
-        # make the background GREEN to indicate that the game has started
         self.screen.fill(self.DARK_GREEN)
-        # open the backlog file and load the backlog in a variable
-        # create a white box on the top middle of the screen to display a backlog
-        backlog_box = pygame.Rect(0, 0, self.screen_width, 100)
-        pygame.draw.rect(self.screen, self.WHITE, backlog_box)
         
-        # display the backlog description in the white box
+        backlog_box = pygame.Rect(0, 0, self.screen_width, 100)  # Position and size of the rectangle
+        pygame.draw.rect(self.screen, self.WHITE, backlog_box)  # Draw the rectangle
+
+        # Display the first backlog without a difficulty value
         small_text = pygame.font.Font("freesansbold.ttf", 20)
-        description = self.jeu.afficher_1_backlog(0)
-        text_surf, text_rect = self.text_objects(description, small_text)
-        text_rect.center = ((self.screen_width // 2), (50))
-        self.screen.blit(text_surf, text_rect)
-        
+        description = None
+
+        for backlog in self.jeu.get_backlogs():
+            if not backlog.get('difficulty'):  # If the backlog doesn't have a difficulty value
+                description = backlog.get('description')
+                break
+
+        if description:
+            ####here 
+            ## Display the description of the backlog in a white box on the top of the screen
+            #####here
+            text_surf, text_rect = self.text_objects(description, small_text)
+            text_rect.center = ((self.screen_width // 2), (50))
+            self.screen.blit(text_surf, text_rect)
+        else:
+            # Handle the case where all backlogs have difficulty values or there are no backlogs
+            text_surf, text_rect = self.text_objects("No backlogs available", small_text)
+            text_rect.center = ((self.screen_width // 2), (50))
+            self.screen.blit(text_surf, text_rect)
+            pygame.time.wait(1000)  # Wait 1 second before going back to the main menu
+            self.start_menu = False
+            self.main_menu = True
+
+        # Go button
+        go_button_x = self.screen_width // 2 - self.button_width // 2
+        go_button_y = self.screen_height // 2
+        go_button_text = "Go"
+
+        if self.draw_button(go_button_text, go_button_y, self.GREY, self.GREEN):
+            print("Go button clicked")  # Placeholder action for the Go button
+
         
 
 
