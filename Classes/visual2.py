@@ -64,6 +64,27 @@ class Visual:
         self.screen.blit(text_surf, text_rect)
         
         
+        
+    def draw_button_anywhere(self, text, x, y, width, active_color, inactive_color, clicked=False):
+        """ Draws a button on the screen  """
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+
+        if clicked:
+            pygame.draw.rect(self.screen, active_color, [x, y, width, self.button_height])
+        elif x < mouse[0] < x +width and y < mouse[1] < y + self.button_height:
+            pygame.draw.rect(self.screen, active_color, [x, y, width, self.button_height])
+            if click[0] == 1:
+                return True
+        else:
+            pygame.draw.rect(self.screen, inactive_color, [x, y, width, self.button_height])
+
+        small_text = pygame.font.Font("freesansbold.ttf", 20)
+        text_surf, text_rect = self.text_objects(text, small_text)
+        text_rect.center = ((x + (width // 2)), (y + (self.button_height // 2)))
+        self.screen.blit(text_surf, text_rect)
+        
+        
     def text_objects(self, text, font):
         """ Creates a text object """
         text_surface = font.render(text, True, self.BLACK)
@@ -355,6 +376,60 @@ class Visual:
             pygame.draw.rect(self.screen, color, input_box, 2)
 
             pygame.display.flip()
+            
+    def vote_menu(self):
+        clicked_vote = False
+        while not clicked_vote:
+            self.screen.fill(self.DARK_GREEN)
+
+            backlog_box = pygame.Rect(0, 0, self.screen_width, 100)
+            pygame.draw.rect(self.screen, self.WHITE, backlog_box)
+
+            # Display the first backlog without a difficulty value
+            small_text = pygame.font.Font("freesansbold.ttf", 20)
+            description = None
+
+            for backlog in self.jeu.get_backlogs():
+                if not backlog.get('difficulty'):
+                    description = backlog.get('description')
+                    break
+
+            if description:
+                text_surf, text_rect = self.text_objects(description, small_text)
+                text_rect.center = ((self.screen_width // 2), (50))
+                self.screen.blit(text_surf, text_rect)
+
+            card_values = ["0", "1", "2", "3", "5", "8", "13", "20", "40", "100", "?", "cafe"]
+            card_start_y = self.screen_height // 2 - 50
+            card_gap = 75
+            card_width = 50
+            card_start_x = 65
+
+            for i in range(int(len(card_values) / 2)):
+                if self.draw_button_anywhere(card_values[i], card_start_x + i * (card_width + card_gap), card_start_y, card_width, self.WHITE, self.WHITE):
+                    print(card_values[i] + " clicked")
+                    clicked_vote = True
+                    # Handle the vote here, e.g., update backlog difficulty
+
+            for i in range(0, int(len(card_values) / 2)):
+                if self.draw_button_anywhere(card_values[i+6], card_start_x + i * (card_width + card_gap), card_start_y + 150, card_width, self.WHITE, self.WHITE):
+                    print(card_values[i+6] + " clicked")
+                    clicked_vote = True
+                    # Handle the vote here, e.g., update backlog difficulty
+
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+        # After voting, you might want to go back to the start menu or handle the next action
+        self.start_menu = True  # Example: Going back to the start menu
+                
+
+        
+        
+        
         
     def start_menu_loop(self):
         self.screen.fill(self.DARK_GREEN)
@@ -372,9 +447,6 @@ class Visual:
                 break
 
         if description:
-            ####here 
-            ## Display the description of the backlog in a white box on the top of the screen
-            #####here
             text_surf, text_rect = self.text_objects(description, small_text)
             text_rect.center = ((self.screen_width // 2), (50))
             self.screen.blit(text_surf, text_rect)
@@ -393,6 +465,8 @@ class Visual:
 
         if self.draw_button(go_button_text, go_button_y, self.GREY, self.GREEN):
             print("Go clicked")
+            self.vote_menu()
+            
             
         back_button_y = self.screen_height - self.button_height - 10  # Position it near the bottom of the screen
         back_button_text = "Back to Main Menu"
@@ -403,7 +477,6 @@ class Visual:
             self.start_menu = False
             self.main_menu = True  # Change state back to main menu
             
-
 
 
 
@@ -442,6 +515,8 @@ class Visual:
                 
             elif self.createBacklog_menu:
                 self.createBacklog_menu_loop()
+            
+
             
 
                 
