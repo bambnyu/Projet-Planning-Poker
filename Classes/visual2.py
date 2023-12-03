@@ -16,7 +16,6 @@ class Visual:
         self.start_menu = False
         self.createBacklog_menu = False
         
-        
         #state variables for rules menu buttons
         self.strictes_clicked = True
         self.moyenne_clicked = False
@@ -389,15 +388,21 @@ class Visual:
             self.main_menu = True
 
         # Go button
-        go_button_x = self.screen_width // 2 - self.button_width // 2
         go_button_y = self.screen_height // 2
         go_button_text = "Go"
 
         if self.draw_button(go_button_text, go_button_y, self.GREY, self.GREEN):
-            print("Go button clicked")  # Placeholder action for the Go button
+            print("Go clicked")
+            
+        back_button_y = self.screen_height - self.button_height - 10  # Position it near the bottom of the screen
+        back_button_text = "Back to Main Menu"
 
-        
-
+        if self.draw_button(back_button_text, back_button_y, self.GREY, self.GREEN):
+            #enregistrer le backlog dans un fichier json
+            self.jeu.enregistrer_backlog("Backlogs/backlog.json")
+            self.start_menu = False
+            self.main_menu = True  # Change state back to main menu
+            
 
 
 
@@ -437,6 +442,8 @@ class Visual:
                 
             elif self.createBacklog_menu:
                 self.createBacklog_menu_loop()
+            
+
                 
             pygame.display.update()
         
