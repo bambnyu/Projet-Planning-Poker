@@ -438,6 +438,7 @@ class Visual:
         
     def start_menu_loop(self):
         self.screen.fill(self.DARK_GREEN)
+
         
         backlog_box = pygame.Rect(0, 0, self.screen_width, 100)  # Position and size of the rectangle
         pygame.draw.rect(self.screen, self.WHITE, backlog_box)  # Draw the rectangle
@@ -467,7 +468,7 @@ class Visual:
         if self.jeu.get_joueur_actif() <= len(self.jeu.get_joueurs()):
             player_name = self.jeu.get_joueurs()[self.jeu.get_joueur_actif()-1]
             player_box = pygame.Rect(250, 150, 300, 50)
-            pygame.draw.rect(self.screen, self.DARK_GREEN, player_box)
+            pygame.draw.rect(self.screen, self.WHITE, player_box)
             player_text_surf, player_text_rect = self.text_objects(f"Active Player: {player_name}", small_text)
             player_text_rect.center = (player_box.centerx, player_box.centery)
             self.screen.blit(player_text_surf, player_text_rect)
@@ -477,7 +478,7 @@ class Visual:
             #### and display the result
 
         # Go button
-        go_button_y = self.screen_height // 2
+        go_button_y = self.screen_height // 2 + 50
         go_button_text = "Go"
 
         if self.draw_button(go_button_text, go_button_y, self.GREY, self.GREEN):
