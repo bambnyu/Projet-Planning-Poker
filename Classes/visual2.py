@@ -378,6 +378,7 @@ class Visual:
             pygame.display.flip()
             
     def vote_menu(self):
+
         clicked_vote = False
         while not clicked_vote:
             self.screen.fill(self.DARK_GREEN)
@@ -398,6 +399,8 @@ class Visual:
                 text_surf, text_rect = self.text_objects(description, small_text)
                 text_rect.center = ((self.screen_width // 2), (50))
                 self.screen.blit(text_surf, text_rect)
+
+
 
             card_values = ["0", "1", "2", "3", "5", "8", "13", "20", "40", "100", "?", "cafe"]
             card_start_y = self.screen_height // 2 - 50
@@ -424,6 +427,8 @@ class Visual:
                     sys.exit()
 
         # After voting, you might want to go back to the start menu or handle the next action
+        self.jeu.set_joueur_actif(self.jeu.get_joueur_actif() + 1)
+        print("joueur actif : ", self.jeu.get_joueur_actif()) #!
         self.start_menu = True  # Example: Going back to the start menu
                 
 
@@ -459,6 +464,18 @@ class Visual:
             self.start_menu = False
             self.main_menu = True
 
+        if self.jeu.get_joueur_actif() <= len(self.jeu.get_joueurs()):
+            player_name = self.jeu.get_joueurs()[self.jeu.get_joueur_actif()-1]
+            player_box = pygame.Rect(250, 150, 300, 50)
+            pygame.draw.rect(self.screen, self.DARK_GREEN, player_box)
+            player_text_surf, player_text_rect = self.text_objects(f"Active Player: {player_name}", small_text)
+            player_text_rect.center = (player_box.centerx, player_box.centery)
+            self.screen.blit(player_text_surf, player_text_rect)
+        else:
+            print("We finished all the players")
+            #### we need to check all votes considering the rule choosen
+            #### and display the result
+
         # Go button
         go_button_y = self.screen_height // 2
         go_button_text = "Go"
@@ -487,7 +504,6 @@ class Visual:
         # Method for running the game
         pygame.init()
         
-
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption('Planning Poker Game')
         

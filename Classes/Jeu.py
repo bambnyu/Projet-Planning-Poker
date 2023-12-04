@@ -11,6 +11,7 @@ class Jeu:
         """Initialise le jeu avec une liste de joueurs et un backlog initialement vide"""
         self.joueurs = []
         self.backlogs = []
+        self.joueur_actif = 1
 
     def get_joueurs(self):
         """Retourne la liste des joueurs"""
@@ -20,6 +21,13 @@ class Jeu:
         """Ajoute un joueur à la liste des joueurs"""
         self.joueurs.append(joueur)
     
+    def get_joueur_actif(self):
+        """Retourne le joueur actif"""
+        return self.joueur_actif
+    def set_joueur_actif(self, value):
+        """Définit le joueur actif"""
+        self.joueur_actif = value
+
     def get_backlogs(self):
         """Retourne le backlog"""
         return self.backlogs
