@@ -4,12 +4,15 @@ class Carte:
 
     # Attributs
     def __init__(self, valeur, image):
-        """Initialise une carte avec une valeur et une image"""
+        """Initialise une carte avec une valeur """
         self.valeur = valeur
-        self.image = image # chemin vers l'image
 
     # Méthodes
     def get_valeur(self):
         """Retourne la valeur de la carte"""
         return self.valeur
+    
+    def set_valeur(self, valeur):
+        """Définit la valeur de la carte"""
+        self.valeur = valeur
     

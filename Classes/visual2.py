@@ -15,6 +15,7 @@ class Visual:
         self.load_menu = False
         self.start_menu = False
         self.createBacklog_menu = False
+        self.show_result = False #!!!
         
         #state variables for rules menu buttons
         self.strictes_clicked = True
@@ -304,7 +305,6 @@ class Visual:
 
     def createBacklog_menu_loop(self):
         """Loop for the create backlog menu"""
-        self.screen.fill(self.DARK_GREEN)
         #### HERE WE NEED AN INPUT BOX TO ENTER THE DESCRIPTION OF BACKLOGS
         ### and show the already created backlogs on the bottom of the screen
         ### a button to go back to the main menu
@@ -412,13 +412,15 @@ class Visual:
                 if self.draw_button_anywhere(card_values[i], card_start_x + i * (card_width + card_gap), card_start_y, card_width, self.WHITE, self.WHITE):
                     print(card_values[i] + " clicked")
                     clicked_vote = True
+                    self.jeu.joueurs[self.jeu.get_joueur_actif()-1].set_carte(card_values[i])
                     # Handle the vote here, e.g., update backlog difficulty
 
             for i in range(0, int(len(card_values) / 2)):
                 if self.draw_button_anywhere(card_values[i+6], card_start_x + i * (card_width + card_gap), card_start_y + 150, card_width, self.WHITE, self.WHITE):
                     print(card_values[i+6] + " clicked")
                     clicked_vote = True
-                    # Handle the vote here, e.g., update backlog difficulty
+                    self.jeu.joueurs[self.jeu.get_joueur_actif()-1].set_carte(card_values[i+6])
+                    # Handle the vote here 
 
             pygame.display.update()
             for event in pygame.event.get():
@@ -475,7 +477,8 @@ class Visual:
         else:
             print("We finished all the players")
             #### we need to check all votes considering the rule choosen
-            #### and display the result
+            #### and display the result screen
+            self.show_result_screen()
 
         # Go button
         go_button_y = self.screen_height // 2 + 50
@@ -491,13 +494,95 @@ class Visual:
 
         if self.draw_button(back_button_text, back_button_y, self.GREY, self.GREEN):
             #enregistrer le backlog dans un fichier json
+            
             self.jeu.enregistrer_backlog("Backlogs/backlog.json")
             self.start_menu = False
             self.main_menu = True  # Change state back to main menu
+         
+
+
+    def show_result_screen(self):
+        # Transition to the result screen
+        self.show_result= True
+        self.start_menu = False
+        
+
+    def show_result_loop(self):
+        running = True
+        while running:
+            self.screen.fill(self.DARK_GREEN)
             
+            backlog_box = pygame.Rect(0, 0, self.screen_width, 100)  # Position and size of the rectangle
+            pygame.draw.rect(self.screen, self.WHITE, backlog_box)  # Draw the rectangle
 
+            # Display the first backlog without a difficulty value
+            small_text = pygame.font.Font("freesansbold.ttf", 20)
+            description = None
 
+            for backlog in self.jeu.get_backlogs():
+                if not backlog.get('difficulty'):  # If the backlog doesn't have a difficulty value
+                    description = backlog.get('description')
+                    break
 
+            if description:
+                text_surf, text_rect = self.text_objects(description, small_text)
+                text_rect.center = ((self.screen_width // 2), (50))
+                self.screen.blit(text_surf, text_rect)
+            else:
+                # Handle the case where all backlogs have difficulty values or there are no backlogs
+                text_surf, text_rect = self.text_objects("No backlogs available", small_text)
+                text_rect.center = ((self.screen_width // 2), (50))
+                self.screen.blit(text_surf, text_rect)
+                pygame.time.wait(1000)  # Wait 1 second before going back to the main menu
+                self.start_menu = False
+                self.main_menu = True
+
+            # Define offset between boxes
+            box_offset = 10  # Space between boxes
+
+            # Prepare to detect extreme values
+            votes = [joueur.get_carte() for joueur in self.jeu.joueurs]
+            numeric_votes = [int(vote) for vote in votes if vote.isdigit()]
+            max_vote = max(numeric_votes, default=None)
+            min_vote = min(numeric_votes, default=None)
+
+            # Calculate the width and position for the vote boxes
+            num_players = len(self.jeu.joueurs)
+            total_offset = box_offset * (num_players - 1)
+            vote_box_width = (self.screen_width - 200 - total_offset) // num_players
+            vote_box_height = 40
+            vote_box_start_x = (self.screen_width - ((vote_box_width + box_offset) * num_players - box_offset)) // 2
+            vote_box_y = self.screen_height // 2 - vote_box_height // 2
+
+            # Display the votes in a row with offsets
+            for i, joueur in enumerate(self.jeu.joueurs):
+                vote = joueur.get_carte()
+                vote_box_x = vote_box_start_x + i * (vote_box_width + box_offset)
+                vote_box = pygame.Rect(vote_box_x, vote_box_y, vote_box_width, vote_box_height)
+
+                # Determine color based on vote value
+                if vote.isdigit() and (int(vote) == max_vote or int(vote) == min_vote):
+                    box_color = self.RED  # Red for extreme values
+                elif vote in ["?", "cafe"]:
+                    box_color = pygame.Color('blue')  # Blue for "?" or "coffee"
+                else:
+                    box_color = self.WHITE  # Default color
+
+                pygame.draw.rect(self.screen, box_color, vote_box)
+                vote_text = f"{joueur.get_nom()}: {vote}"
+                vote_text_surf, vote_text_rect = self.text_objects(vote_text, pygame.font.Font("freesansbold.ttf", 20))
+                vote_text_rect.center = (vote_box.centerx, vote_box.centery)
+                self.screen.blit(vote_text_surf, vote_text_rect)
+
+            # Handling game rules and navigation buttons as before...
+            # ...
+
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+            
 
     
     
@@ -530,8 +615,13 @@ class Visual:
             elif self.start_menu:
                 self.start_menu_loop()
                 
+            elif self.show_result:
+                self.show_result_loop()    
+                
             elif self.createBacklog_menu:
                 self.createBacklog_menu_loop()
+            
+           
             
 
             

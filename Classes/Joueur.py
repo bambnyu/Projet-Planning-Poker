@@ -7,13 +7,12 @@ class Joueur:
     def __init__(self, nom):
         """Initialise un joueur avec un nom un emplacement pour une carte et un deck de cartes"""
         self.nom = nom
-        self.carte = None
-        self.deck = [Carte(valeur, f"images_cartes/cartes_{valeur}.png") for valeur in [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "interro", "cafe"]] # liste de cartes
+        self.carte = Carte("Aucune", "Aucune")
         
     # Méthodes
     def set_carte(self, carte):
         """Défini la carte du joueur"""
-        self.carte = carte
+        self.carte.set_valeur(carte)
 
     def get_nom(self):
         """Retourne le nom du joueur"""
