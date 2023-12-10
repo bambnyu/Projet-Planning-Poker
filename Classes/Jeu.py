@@ -85,7 +85,17 @@ class Jeu:
         # Ajouter cet élément à la liste des backlogs
         self.backlogs.append(new_backlog_item)
         
+
+    def medianne(self, liste):
+        """Calcule la médiane d'une liste de valeurs"""
+        liste.sort()
+        if len(liste) % 2 == 0:
+            return (liste[len(liste) // 2] + liste[len(liste) // 2 - 1]) / 2
+        else:
+            return liste[len(liste) // 2]
+        
 def enregistrer_backlog(self, fichier): 
-        """Enregistre le backlog dans un fichier json"""
-        with open(fichier, 'w') as f:
-            json.dump(self.backlogs, f)
+    """Enregistre le backlog dans un fichier json"""
+    with open(fichier, 'w') as f:
+        json.dump(self.backlogs, f)
+        

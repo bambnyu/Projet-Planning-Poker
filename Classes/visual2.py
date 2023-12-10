@@ -29,6 +29,7 @@ class Visual:
         self.GREEN = (0, 200, 0)
         self.DARK_GREEN = (0, 100, 0)
         self.RED = (200, 0, 0)
+        self.BLUE = (0, 0, 200)
         
         #set up screen
         self.screen_width, self.screen_height = 800, 600
@@ -44,7 +45,16 @@ class Visual:
 
 
 
-
+    def draw_box(self, x, y, width, height, color, text):
+        """ Draws a box on the screen """
+        pygame.draw.rect(self.screen, color, [x, y, width, height])
+        small_text = pygame.font.Font("freesansbold.ttf", 20)
+        text_surf, text_rect = self.text_objects(text, small_text)
+        text_rect.center = ((x + (width // 2)), (y + (height // 2)))
+        self.screen.blit(text_surf, text_rect)
+        
+         
+    
     def draw_button(self, text, y, active_color, inactive_color, clicked=False):
         """ Draws a button on the screen  """
         mouse = pygame.mouse.get_pos()
@@ -558,31 +568,72 @@ class Visual:
             for i, joueur in enumerate(self.jeu.joueurs):
                 vote = joueur.get_carte()
                 vote_box_x = vote_box_start_x + i * (vote_box_width + box_offset)
-                vote_box = pygame.Rect(vote_box_x, vote_box_y, vote_box_width, vote_box_height)
+               
 
                 # Determine color based on vote value
                 if vote.isdigit() and (int(vote) == max_vote or int(vote) == min_vote):
                     box_color = self.RED  # Red for extreme values
                 elif vote in ["?", "cafe"]:
-                    box_color = pygame.Color('blue')  # Blue for "?" or "coffee"
+                    box_color = self.BLUE   #pygame.Color('blue')  # Blue for "?" or "coffee"
                 else:
                     box_color = self.WHITE  # Default color
 
-                pygame.draw.rect(self.screen, box_color, vote_box)
-                vote_text = f"{joueur.get_nom()}: {vote}"
-                vote_text_surf, vote_text_rect = self.text_objects(vote_text, pygame.font.Font("freesansbold.ttf", 20))
-                vote_text_rect.center = (vote_box.centerx, vote_box.centery)
-                self.screen.blit(vote_text_surf, vote_text_rect)
+                
+                self.draw_box(vote_box_x, vote_box_y, vote_box_width, vote_box_height, box_color, f"{joueur.get_nom()}: {vote}")
 
-            # Handling game rules and navigation buttons as before...
-            # ...
+            # Handling game rules and navigation buttons 
+            if self.draw_button("Back to main menu", self.screen_height - 120, self.GREY, self.GREEN):
+                self.show_result = False
+                self.main_menu = True
+                break
+            
+            
+            # on top of the back to main menu button, display a button that corresponds to the rule choosen
+            # if strictes, and all votes are the same, then the difficulty is the vote value and we go to the next backlog
+            # if strictes, and all votes are not the same, then we restart the vote menu and all votes are reset
+            # if moyenne, then the difficulty is the average of all votes and we go to the next backlog
+            # if medianne, then the difficulty is the median of all votes and we go to the next backlog
+            # if the vote is ?, all votes are reset and the difiiulty is '' and we go to the next backlog
+            # if the vote is cafe, we delete all votes save the backlog file and go back to the main menu
+            
+            all_votes = [joueur.get_carte() for joueur in self.jeu.joueurs]
 
+            # the coffee as priority over everything
+            if 'cafe' in all_votes:
+                print("votes cafe")
+                break
+            
+            # the ? as priority over everything except the coffee
+            elif '?' in all_votes:
+                print("votes ?")
+                break
+            
+            
+            elif self.medianne_clicked or self.moyenne_clicked :
+                if self.medianne_clicked:
+                    print("votes medianne")
+                    
+                    medianne = self.jeu.medianne(all_votes)
+                    print("medianne : ", medianne)
+                
+                elif self.moyenne_clicked:
+                    print("votes moyenne")
+                    
+                    moyenne = sum(all_votes) / len(all_votes)
+                    print("moyenne : ", moyenne)         
+            
+            if self.strictes_clicked:
+                print("votes strictes")
+                       
+            
+
+
+            # Update the display
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-            
 
     
     
