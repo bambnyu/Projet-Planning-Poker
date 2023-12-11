@@ -330,7 +330,10 @@ class Visual:
 
         backlog_description = ''
 
-        while True:
+        #######
+        
+
+        while True:                    
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -356,6 +359,10 @@ class Visual:
                             text += event.unicode
 
             self.screen.fill(self.WHITE)
+            
+            instruction_text = "Enter the description of your backlogs in the box below"
+            self.screen.blit(font.render(instruction_text, True, self.BLACK), (110, 50))
+
 
             # Display existing backlogs
             # This can be a loop displaying each backlog item. Here's a simple example:
@@ -372,7 +379,7 @@ class Visual:
             if self.draw_button("Start Game", self.screen_height - 70, self.GREY, self.DARK_GREEN):
                 # enregistrer le backlog dans un fichier json
                 if backlog_description:
-                    self.jeu.enregistrer_backlog("Backlogs/backlog.json")
+                    self.jeu.enregistrer_backlog("Backlogs/backlog_test.json")
                     
                     self.createBacklog_menu = False
                     self.start_menu = True
@@ -473,6 +480,20 @@ class Visual:
             text_surf, text_rect = self.text_objects("No backlogs available", small_text)
             text_rect.center = ((self.screen_width // 2), (50))
             self.screen.blit(text_surf, text_rect)
+            
+            ########
+            # we need to save all backlogs in a file
+            # if one of the difficulty is skipped we need to save it as null
+            
+            for backlog in self.jeu.get_backlogs():
+                if backlog.get('difficulty') == 'Skipped':
+                    backlog['difficulty'] = None
+            self.jeu.enregistrer_backlog("Backlogs/backlog.json")
+                    
+            
+            
+            #######
+            
             pygame.time.wait(1000)  # Wait 1 second before going back to the main menu
             self.start_menu = False
             self.main_menu = True
@@ -571,7 +592,7 @@ class Visual:
                
 
                 # Determine color based on vote value
-                if vote.isdigit() and (int(vote) == max_vote or int(vote) == min_vote):
+                if vote.isdigit() and (int(vote) == max_vote or int(vote) == min_vote) and max_vote != min_vote:
                     box_color = self.RED  # Red for extreme values
                 elif vote in ["?", "cafe"]:
                     box_color = self.BLUE   #pygame.Color('blue')  # Blue for "?" or "coffee"
@@ -588,13 +609,6 @@ class Visual:
                 break
             
             
-            # on top of the back to main menu button, display a button that corresponds to the rule choosen
-            # if strictes, and all votes are the same, then the difficulty is the vote value and we go to the next backlog
-            # if strictes, and all votes are not the same, then we restart the vote menu and all votes are reset
-            # if moyenne, then the difficulty is the average of all votes and we go to the next backlog
-            # if medianne, then the difficulty is the median of all votes and we go to the next backlog
-            # if the vote is ?, all votes are reset and the difiiulty is '' and we go to the next backlog
-            # if the vote is cafe, we delete all votes save the backlog file and go back to the main menu
             
             all_votes = [joueur.get_carte() for joueur in self.jeu.joueurs]
 
@@ -605,29 +619,63 @@ class Visual:
             
             # the ? as priority over everything except the coffee
             elif '?' in all_votes:
-                print("votes ?")
+                if self.draw_button("Skip this backlog", self.screen_height - 200, self.GREY, self.GREEN):
+                    self.jeu.set_difficulty_backlog('Skipped')  # Mark current backlog as skipped
+                    self.jeu.set_joueur_actif(1)  # Reset active player for next backlog
+                    self.start_menu = True  # Proceed to next backlog
+                    self.show_result = False
+                    break
                 break
             
             
             elif self.medianne_clicked or self.moyenne_clicked :
+                numeric_votes = [int(vote) for vote in all_votes if vote.isdigit()]
                 if self.medianne_clicked:
-                    print("votes medianne")
-                    
-                    medianne = self.jeu.medianne(all_votes)
-                    print("medianne : ", medianne)
+                    if self.draw_button("Validate votes", self.screen_height - 200, self.GREY, self.GREEN):
+                        print("votes medianne")
+                        
+                        medianne = self.jeu.medianne(numeric_votes)
+                        print("medianne : ", medianne)
+                        self.jeu.set_difficulty_backlog(medianne)  
+                        self.jeu.set_joueur_actif(1)
+                        self.start_menu = True
+                        self.show_result = False
+                        break
+                    break
                 
                 elif self.moyenne_clicked:
-                    print("votes moyenne")
+                    if self.draw_button("Validate votes", self.screen_height - 200, self.GREY, self.GREEN):
+                        print("votes moyenne")                    
+                        moyenne = int(sum(numeric_votes) / len(numeric_votes))
+                        print("moyenne : ", moyenne)         
+                        self.jeu.set_difficulty_backlog(moyenne)
+                        self.jeu.set_joueur_actif(1)
+                        self.start_menu = True
+                        self.show_result = False
+                        break
+                    break
                     
-                    moyenne = sum(all_votes) / len(all_votes)
-                    print("moyenne : ", moyenne)         
             
-            if self.strictes_clicked:
+            elif self.strictes_clicked:
                 print("votes strictes")
-                       
-            
-
-
+                if len(set(numeric_votes)) == 1:
+                    if self.draw_button("Validate votes", self.screen_height - 200, self.GREY, self.GREEN):
+                        print("votes identiques")
+                        self.jeu.set_difficulty_backlog(all_votes[0])
+                        self.jeu.set_joueur_actif(1)
+                        self.start_menu = True
+                        self.show_result = False
+                        break
+                    break
+                else:
+                    if self.draw_button("Restart vote", self.screen_height - 200, self.GREY, self.GREEN):
+                        print("votes non identiques")
+                        self.jeu.set_joueur_actif(1)
+                        self.start_menu = True
+                        self.show_result = False
+                        break
+                    break
+                    
             # Update the display
             pygame.display.update()
             for event in pygame.event.get():

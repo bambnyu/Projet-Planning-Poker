@@ -85,7 +85,13 @@ class Jeu:
         # Ajouter cet élément à la liste des backlogs
         self.backlogs.append(new_backlog_item)
         
-
+    def set_difficulty_backlog(self, difficulty):
+        """Définit la difficulté d'un backlog du premier backlog sans difficulté"""
+        for backlog in self.backlogs:
+            if backlog['difficulty'] == None:
+                backlog['difficulty'] = difficulty
+                break
+        
     def medianne(self, liste):
         """Calcule la médiane d'une liste de valeurs"""
         liste.sort()
@@ -93,9 +99,3 @@ class Jeu:
             return (liste[len(liste) // 2] + liste[len(liste) // 2 - 1]) / 2
         else:
             return liste[len(liste) // 2]
-        
-def enregistrer_backlog(self, fichier): 
-    """Enregistre le backlog dans un fichier json"""
-    with open(fichier, 'w') as f:
-        json.dump(self.backlogs, f)
-        
