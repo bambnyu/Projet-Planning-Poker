@@ -379,7 +379,7 @@ class Visual:
             if self.draw_button("Start Game", self.screen_height - 70, self.GREY, self.DARK_GREEN):
                 # enregistrer le backlog dans un fichier json
                 if backlog_description:
-                    self.jeu.enregistrer_backlog("Backlogs/backlog_test.json")
+                    self.jeu.enregistrer_backlog("Backlogs/backlog.json")
                     
                     self.createBacklog_menu = False
                     self.start_menu = True
@@ -615,7 +615,16 @@ class Visual:
             # the coffee as priority over everything
             if 'cafe' in all_votes:
                 print("votes cafe")
+                for backlog in self.jeu.get_backlogs():
+                    if backlog.get('difficulty') == 'Skipped':
+                        backlog['difficulty'] = None
+                self.jeu.enregistrer_backlog("Backlogs/backlog.json")
+                # wait 1 second
+                pygame.time.wait(1000)
+                self.show_result = False
+                self.main_menu = True
                 break
+            
             
             # the ? as priority over everything except the coffee
             elif '?' in all_votes:
@@ -675,6 +684,11 @@ class Visual:
                         self.show_result = False
                         break
                     break
+                
+            else:
+                self.show_result = False
+                self.start_menu = True
+                break
                     
             # Update the display
             pygame.display.update()

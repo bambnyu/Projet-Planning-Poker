@@ -82,15 +82,4 @@ def test_création_jeu():
     assert jeu.get_backlogs() == jeu.backlogs
 
 
-def test_regles():
-    """test de la classe Regles"""
-    # Création d'une règle
-    regles = Regles()
-    # Vérification des attributs
-    assert regles.mode == "Classique"
-    # Vérification de la méthode set_mode
-    regles.set_mode("Strictes")
-    assert regles.mode == "Strictes"
-    # Vérification de la méthode get_mode
-    assert regles.get_mode() == "Strictes"
 

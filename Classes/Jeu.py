@@ -1,6 +1,6 @@
 import json
 from Joueur import *
-from Regles import *
+
 
 
 class Jeu:
