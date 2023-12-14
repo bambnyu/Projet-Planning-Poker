@@ -411,7 +411,7 @@ class Visual:
 
             for i in range(int(len(card_values) / 2)): # for each card
                 if self.draw_button_anywhere(card_values[i], card_start_x + i * (card_width + card_gap), card_start_y, card_width, self.WHITE, self.WHITE):
-                    print(card_values[i] + " clicked") # print the value of the card clicked
+
                     clicked_vote = True # set clicked_vote to true
                     self.jeu.joueurs[self.jeu.get_joueur_actif()-1].set_carte(card_values[i]) # set the card of the player to the value of the card clicked
                     
