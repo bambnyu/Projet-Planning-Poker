@@ -1,5 +1,5 @@
 
-from Visual import *
+from Board import *
 
 
 
@@ -15,6 +15,6 @@ from Visual import *
 
 
 if __name__ == "__main__":
-    visual = Visual()
-    visual.run()
+    board = Board()
+    board.run()
     

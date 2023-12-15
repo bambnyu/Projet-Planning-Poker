@@ -58,10 +58,20 @@ class Jeu:
         with open(fichier, 'r') as f:
             self.backlogs = json.load(f) # setter/initilialise le backlog
 
+
+
     def enregistrer_backlog(self, fichier): 
         """Enregistre le backlog dans un fichier json"""
         with open(fichier, 'w') as f:
             json.dump(self.backlogs, f) # enregistre les nouveau backlogs dans le fichier json
+            
+    def enregistrer_backlog_skipped(self, fichier):
+        """Enregistre les backlogs dans un fichier json et transforme les difficultés skipped en None"""
+        for backlog in self.get_backlogs():
+                if backlog.get('difficulty') == 'Skipped':
+                    backlog['difficulty'] = None
+        self.enregistrer_backlog("Backlogs/backlog.json")        
+
                 
     def set_difficulty_backlog(self, difficulty):
         """Définit la difficulté d'un backlog du premier backlog sans difficulté"""
@@ -69,6 +79,23 @@ class Jeu:
             if backlog['difficulty'] == None: # si backlog est sans difficulté
                 backlog['difficulty'] = difficulty # définit la difficulté du backlog
                 break
+    
+    ##### Méthodes liées a la recuperation des votes #####    
+    def get_all_votes(self):
+        return [joueur.get_carte() for joueur in self.joueurs]    
+    
+    def get_numerical_votes(self):
+        """Retourne les votes numériques"""
+        votes = self.get_all_votes()
+        return [int(vote) for vote in votes if vote.isdigit()] # Get only numeric votes
+    
+    def max_min_votes(self):
+        """Retourne le maximum et le minimum des votes"""
+        numeric_votes = self.get_numerical_votes() # Get only numeric votes
+        max_vote = max(numeric_votes, default=None) # Get the maximum vote
+        min_vote = min(numeric_votes, default=None) # Get the minimum vote 
+        return max_vote, min_vote
+    ##### end Méthodes liées a la recuperation des votes #####
         
     ##### Méthodes liées au calcul de la difficulté #####    
     def medianne(self, liste):
