@@ -1,12 +1,3 @@
-#from class_and_function import *
-
-import sys
-import os
-
-currentdir = os.path.dirname(os.path.realpath(__file__))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
-
 from Board import *
 
 # Fichier en français pour plus de clarté car etape importante du projet dans un cours en français (et non en anglais) malgré le fait que le reste du code soit en anglais pour des raisons de convention
