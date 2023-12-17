@@ -55,15 +55,23 @@ class Board :
         elif self.visual.moyenne_clicked: # if the moyenne button is clicked
             self.visual.display_rule_description("moyenne")
         elif self.visual.medianne_clicked: # if the medianne button is clicked
-            self.visual.display_rule_description("mediane")
+            self.visual.display_rule_description("medianne")
+        elif self.visual.majorite_abs_clicked: # if the majorite absolue button is clicked
+            self.visual.display_rule_description("majorite_abs")
+        elif self.visual.majorite_rel_clicked: # if the majorite relative button is clicked
+            self.visual.display_rule_description("majorite_rel")
                 
         if self.visual.draw_button_general("Strictes", self.visual.button_start_x, self.visual.button_start_y, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN, self.visual.strictes_clicked): # if the strictes button is clicked
             self.visual.change_difficulty("strictes") # change the difficulty to strictes
         if self.visual.draw_button_general("Moyenne", self.visual.button_start_x, self.visual.button_start_y + self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN, self.visual.moyenne_clicked): # if the moyenne button is clicked   
             self.visual.change_difficulty("moyenne") # change the difficulty to moyenne
         if self.visual.draw_button_general("Medianne", self.visual.button_start_x, self.visual.button_start_y + 2 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN,self.visual.medianne_clicked): # if the medianne button is clicked
-            self.visual.change_difficulty("mediane") # change the difficulty to medianne
-        if self.visual.draw_button_general("Back to main menu", self.visual.button_start_x, self.visual.button_start_y + 3 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN): # if the back to main menu button is clicked
+            self.visual.change_difficulty("medianne") # change the difficulty to medianne
+        if self.visual.draw_button_general("Majorité absolue", self.visual.button_start_x, self.visual.button_start_y + 3 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN, self.visual.majorite_abs_clicked): # if the majorite absolue button is clicked
+            self.visual.change_difficulty("majorite_abs") # change the difficulty to majorite absolue
+        if self.visual.draw_button_general("Majorité relative", self.visual.button_start_x, self.visual.button_start_y + 4 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN, self.visual.majorite_rel_clicked): # if the majorite relative button is clicked
+            self.visual.change_difficulty("majorite_rel") # change the difficulty to majorite relative
+        if self.visual.draw_button_general("Back to main menu", self.visual.button_start_x, self.visual.button_start_y + 5 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN): # if the back to main menu button is clicked
             self.visual.change_state("main_menu") # change the state to main menu
             
             
@@ -112,7 +120,6 @@ class Board :
             pygame.display.flip() # Update the screen
             
             
-            
     def start_menu_loop(self):
         """ Loop for the start menu """
         small_text = pygame.font.Font("freesansbold.ttf", 20) # Define font
@@ -138,7 +145,6 @@ class Board :
             self.visual.jeu.enregistrer_backlog("Backlogs/backlog.json") # save the backlogs in a json file
             self.visual.start_menu = False # Change state back to main menu
             self.visual.main_menu = True  # Change state back to main menu
-            
             
             
     def show_result_loop(self):
@@ -199,11 +205,27 @@ class Board :
                     break        
             elif self.visual.strictes_clicked: # If the strictes button is clicked
                 if len(set(numeric_votes)) == 1: # If all votes are the same
-                    self.visual.strictes_vote_egaux(numeric_votes,all_votes) # do the strictes instructions
+                    self.visual.strictes_vote_egaux(all_votes) # do the strictes instructions
                     break
                 else:
-                    self.visual.strictes_vote_diff(numeric_votes,all_votes)
+                    self.visual.strictes_vote_diff()
                     break 
+            elif self.visual.majorite_abs_clicked: # If the majorite absolue button is clicked
+                # If there is a majority
+                val_max = -1 # default value for the majority
+                for i in numeric_votes: # for each vote
+                    if numeric_votes.count(i) > len(numeric_votes) / 2:
+                        val_max = i # there is a majority
+                        break
+                if val_max==-1:
+                    self.visual.majorite_abs_vote_not_exist() # do the majorite absolue instructions
+                    break
+                else:
+                    self.visual.majorite_abs_vote_exist(val_max) # do the majorite absolue instructions
+                    break
+            elif self.visual.majorite_rel_clicked: # If the majorite relative button is clicked
+                self.visual.majorite_rel_vote(numeric_votes)
+                break
             else:
                 self.visual.change_state("start_menu") # change the state to main menu
                 break      
@@ -212,9 +234,7 @@ class Board :
             for event in pygame.event.get(): # Check for events
                 self.visual.check_for_quit(event) # Check if the user wants to quit
                 
-                
-                
-                
+      
     def load_menu_loop(self):
         """Loop for the load menu"""
         # Text input box properties
@@ -321,3 +341,8 @@ class Board :
         self.visual.jeu.set_joueur_actif(self.visual.jeu.get_joueur_actif() + 1) # set the active player to the next player
         self.visual.change_state("start_menu")
         
+        
+        
+        
+        
+# Code by Adjame Tellier-Rozen (ROZEN)

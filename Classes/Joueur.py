@@ -1,26 +1,28 @@
 from Carte import *
 
 class Joueur:
-    """Classe qui représente un joueur"""
+    """Class that represents a player"""
 
-    # Attributs
+    # Attributes
     def __init__(self, nom):
-        """Initialise un joueur avec un nom un emplacement pour une carte et un deck de cartes"""
+        """Initializes a player with a name and a card"""
         self.nom = nom
         self.carte = Carte("Aucune", "Aucune")
         
-    # Méthodes
+    # Methods
     def set_carte(self, carte):
-        """Défini la carte du joueur"""
+        """Sets the player's card"""
         self.carte.set_valeur(carte)
 
     def get_nom(self):
-        """Retourne le nom du joueur"""
+        """Returns the player's name"""
         return self.nom
 
     def get_carte(self):
-        """Retourne la carte du joueur"""
+        """Returns the player's card"""
         if self.carte:
             return self.carte.get_valeur()
         else:
             return "Aucune"
+        
+# Code by Adjame Tellier-Rozen (ROZEN)

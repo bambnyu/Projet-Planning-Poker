@@ -22,6 +22,8 @@ class Visual:
         self.strictes_clicked = True
         self.moyenne_clicked = False
         self.medianne_clicked = False
+        self.majorite_abs_clicked = False
+        self.majorite_rel_clicked = False
         
         # Define colors
         self.WHITE = (255, 255, 255) # used for the background
@@ -47,6 +49,7 @@ class Visual:
 
     ##### Methods #####
 
+    ##### Methods linked to boxes and buttons #####
     def draw_box(self, x, y, width, height, box_color, text=None, font_size=20, text_color=None):
         """ Draws a box on the screen and optionally adds text to it. """
         # Draw the box
@@ -101,8 +104,39 @@ class Visual:
             button_color = inactive_color
         self.draw_box(x, y, width, height, button_color, text)
         return False    
+    
+    ##### End Methods linked to boxes and buttons #####
+    
+    #### input box methods ####  
+    def input_box_toggle(self,event,input_box,color_inactive,color_active,active,color):
+        """Toggle the active variable of an input box based on a mouse click event."""
+        if event.type == pygame.MOUSEBUTTONDOWN: # If the user clicked on the input_box rect.
+                    if input_box.collidepoint(event.pos): # Toggle the active variable.
+                        active = not active     
+                    else:
+                        active = False
+        color = color_active if active else color_inactive # Change the current color of the input box.  
+        return active, color
+    
+    def handle_input_box_events(self, event, active, text, backlog_description):
+        """Handle keyboard events for an input box."""
+
+        if event.type == pygame.KEYDOWN:  # Check for keydown event
+            if active:  # Check if input box is active
+                if event.key == pygame.K_RETURN:  # Enter key pressed
+                    # Add the text to backlogs and reset text
+                    backlog_description = text
+                    self.jeu.ajouter_backlog(backlog_description)
+                    text = ''
+                elif event.key == pygame.K_BACKSPACE:  # Backspace key pressed
+                    text = text[:-1]  # Remove last character
+                else:
+                    text += event.unicode  # Add new character
+
+        return text
+    #### end input box methods ####
         
-        
+    ##### Methods linked to text manipulation and representation #####    
     def text_objects(self, text, font):
         """ Creates a text object """
         text_surface = font.render(text, True, self.BLACK) # Render text
@@ -131,8 +165,13 @@ class Visual:
             description = "Les joueurs votent pour la tache actuelle. Ils revelent leur votes en meme temps. Si les votes sont tous identiques la valeur est enregistre sinon un nouveau vote est lancer apres une discussion entre les 2 valeurs les plus extremes.\n"
         elif rule_choosen == "moyenne":
             description = "Les joueurs votent pour la tache actuelle. Ils revelent leur votes en meme temps. La valeur enregistre est la moyenne des votes"
-        elif rule_choosen == "mediane":
+        elif rule_choosen == "medianne":
             description = "Les joueurs votent pour la tache actuelle. Ils revelent leur votes en meme temps. La valeur enregistre est la mediane des votes"
+        elif rule_choosen == "majorite_abs":
+            description = "Les joueurs votent pour la tache actuelle. Ils revelent leur votes en meme temps. La valeur enregistre est la valeur qui a plus de la moitie des votes"
+        elif rule_choosen == "majorite_rel":
+            description = "Les joueurs votent pour la tache actuelle. Ils revelent leur votes en meme temps. La valeur enregistre est la valeur qui a le plus de vote.es"
+        
         else:
                 description = "Error"
                 
@@ -155,7 +194,10 @@ class Visual:
             text_rect.topleft = (50, self.button_start_y + 5*self.button_gap+15 + y_offset) # position of the text
             self.screen.blit(text_surf, text_rect) # draw text
             y_offset += 30 # increase the offset for the next line
+            
+    ##### End Methods linked to text manipulation and representation #####   
         
+    ##### Methods linked to files #####   
     def open_file_dialog(self):
         """Opens a file dialog and returns the selected file path.""" 
         # we are using tkinter to open the file explorer window because pygame doesn't have a file dialog
@@ -166,45 +208,24 @@ class Visual:
         # Open the file dialog
         file_path = filedialog.askopenfilename() # Open the file dialog and return the selected file path
         return file_path
-        
-    #### input box methods ####  
-    def input_box_toggle(self,event,input_box,color_inactive,color_active,active,color):
-        if event.type == pygame.MOUSEBUTTONDOWN: # If the user clicked on the input_box rect.
-                    if input_box.collidepoint(event.pos): # Toggle the active variable.
-                        active = not active     
-                    else:
-                        active = False
-        color = color_active if active else color_inactive # Change the current color of the input box.  
-        return active, color
     
-    def handle_input_box_events(self, event, active, text, backlog_description):
-        """Handle keyboard events for an input box."""
-
-        if event.type == pygame.KEYDOWN:  # Check for keydown event
-            if active:  # Check if input box is active
-                if event.key == pygame.K_RETURN:  # Enter key pressed
-                    # Add the text to backlogs and reset text
-                    backlog_description = text
-                    self.jeu.ajouter_backlog(backlog_description)
-                    text = ''
-                elif event.key == pygame.K_BACKSPACE:  # Backspace key pressed
-                    text = text[:-1]  # Remove last character
-                else:
-                    text += event.unicode  # Add new character
-
-        return text
-    #### end input box methods ####
+    ##### End Methods linked to files #####
+        
+    
         
         
         
         
     #### change states of variables and options ####
+    
     def change_difficulty(self, difficulty_name):
         """Change the state of the game to the specified menu."""
         # Set all menu states to False initially
         self.strictes_clicked = False # set the strictes button to clicked
         self.moyenne_clicked = False # set the moyenne button to not clicked 
         self.medianne_clicked = False # set the medianne button to not clicked
+        self.majorite_abs_clicked = False # set the majorite_abs button to not clicked
+        self.majorite_rel_clicked = False # set the majorite_rel button to not clicked
 
         # Set the specified menu to True
         if difficulty_name == 'strictes':
@@ -213,6 +234,10 @@ class Visual:
             self.moyenne_clicked = True
         elif difficulty_name == 'medianne':
             self.medianne_clicked = True
+        elif difficulty_name == 'majorite_abs':
+            self.majorite_abs_clicked = True
+        elif difficulty_name == 'majorite_rel':
+            self.majorite_rel_clicked = True
         
     def change_state(self, menu_name):
         """Change the state of the game to the specified menu."""
@@ -251,8 +276,11 @@ class Visual:
         pygame.quit()
         sys.exit()
     #### end quit game methods ####
-
+    
+    
+    #### search backlog methods ####
     def check_if_all_backlogs_have_difficulty(self):
+        """Check if all backlogs have a difficulty value."""
         description = None
         for backlog in self.jeu.get_backlogs():
             if not backlog.get('difficulty'):
@@ -263,10 +291,11 @@ class Visual:
         # Use draw_box to display the backlog description
         self.draw_box(0, 0, self.screen_width, 100, self.WHITE, description, font_size=20)
         return description
-
+    #### end search backlog methods ####
             
-
+    #### display methods for votes ####
     def vote_color(self,vote,max_vote,min_vote):
+        """ vote color"""
         if vote.isdigit() and (int(vote) == max_vote or int(vote) == min_vote) and max_vote != min_vote: # If the vote is a number and it is the maximum or minimum vote
                     box_color = self.RED  # Red for extreme values
         elif vote in ["?", "cafe"]: # If the vote is a question mark or coffee
@@ -306,20 +335,50 @@ class Visual:
                         self.jeu.set_joueur_actif(1) # Reset active player for next backlog go back to the first player
                         self.change_state("start_menu") # change the state to start menu
     
-    def strictes_vote_egaux(self,numeric_votes,all_votes):
+    def strictes_vote_egaux(self,all_votes):
         """ strictes vote"""
         if self.draw_button_general("Validate votes", self.button_start_x, self.screen_height - 200, self.button_width, self.button_height, self.GREY, self.GREEN):    
             self.jeu.set_difficulty_backlog(all_votes[0]) # Set the difficulty of the backlog to the first vote
             self.jeu.set_joueur_actif(1) # Reset active player for next backlog go back to the first player
             self.change_state("start_menu") # change the state to start menu 
   
-    def strictes_vote_diff(self,numeric_votes,all_votes):
+    def strictes_vote_diff(self):
         """ strictes vote"""
         if self.draw_button_general("Restart vote", self.button_start_x, self.screen_height - 200, self.button_width, self.button_height, self.GREY, self.GREEN):
             self.jeu.set_joueur_actif(1) # Reset active player for next backlog go back to the first player
             self.change_state("start_menu") # change the state to start menu
     
+    def majorite_abs_vote_exist(self,value):
+        """ majorite_abs vote"""
+        if self.draw_button_general("Validate votes", self.button_start_x, self.screen_height - 200, self.button_width, self.button_height, self.GREY, self.GREEN):
+            self.jeu.set_difficulty_backlog(value) # Set the difficulty of the backlog to the most frequent vote
+            self.jeu.set_joueur_actif(1) # Reset active player for next backlog go back to the first player
+            self.change_state("start_menu") # change the state to start menu
+            
+    def majorite_abs_vote_not_exist(self):
+        """ majorite_abs vote"""
+        if self.draw_button_general("Restart vote", self.button_start_x, self.screen_height - 200, self.button_width, self.button_height, self.GREY, self.GREEN):
+            self.jeu.set_joueur_actif(1)
+            self.change_state("start_menu")
+    
+    def majorite_rel_vote(self,numeric_votes):
+        """ majorite_rel vote"""
+        # count the number of votes for each value
+        # the value with the most votes is the difficulty
+        # if there is a tie, the difficulty is the lowest value
+        count = {}
+        for i in numeric_votes:
+            count[i] = count.get(i, 0) + 1
+        max_count = max(count.values())
+        difficulty = min([k for k, v in count.items() if v == max_count])
+        if self.draw_button_general("Validate vote", self.button_start_x, self.screen_height - 200, self.button_width, self.button_height, self.GREY, self.GREEN):
+            self.jeu.set_difficulty_backlog(difficulty) # Set the difficulty of the first backlog without a difficulty value
+            self.jeu.set_joueur_actif(1) # Set the active player to the first player
+            self.change_state("start_menu") # change the state to start menu
+    
+    
     def display_cards_to_vote_screens(self,clicked_vote):
+        """Display the cards to vote screens"""
         card_values = ["0", "1", "2", "3", "5", "8", "13", "20", "40", "100", "?", "cafe"]
         card_start_y = self.screen_height // 2 - 50
         card_gap = 75
@@ -337,4 +396,8 @@ class Visual:
                 self.jeu.joueurs[self.jeu.get_joueur_actif()-1].set_carte(card_values[i+6]) # set the card of the player to the value of the card clicked
         
         return clicked_vote
-                
+            
+    #### display methods for votes ####
+    
+    
+# Code by Adjame Tellier-Rozen (ROZEN)

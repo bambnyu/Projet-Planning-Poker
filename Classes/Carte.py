@@ -1,18 +1,19 @@
 
 class Carte:
-    """Classe qui représente une carte à jouer"""
+    """Class that represents a playing card"""
 
-    # Attributs
+    # Constructor and attributes
     def __init__(self, valeur, image):
-        """Initialise une carte avec une valeur """
+        """Initializes a card with a value"""
         self.valeur = valeur
 
-    # Méthodes
+    # Methods
     def get_valeur(self):
-        """Retourne la valeur de la carte"""
+        """Returns the value of the card"""
         return self.valeur
     
     def set_valeur(self, valeur):
-        """Définit la valeur de la carte"""
+        """Sets the value of the card"""
         self.valeur = valeur
     
+# Code by Adjame Tellier-Rozen (ROZEN)

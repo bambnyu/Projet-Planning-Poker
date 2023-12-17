@@ -4,113 +4,111 @@ from Joueur import *
 
 
 class Jeu:
-    """Classe qui représente le jeu"""
+    """Class that represents the game"""
 
     #########################################
-    # Attributs et méthodes de la classe Jeu
+    # Attributs and methods of the Jeu class
     #########################################
     
     ##### Attributs #####
     
     def __init__(self):
-        """Initialise le jeu avec une liste de joueurs et un backlog initialement vide"""
-        self.joueurs = [] # liste des joueurs
-        self.backlogs = [] # liste des backlogs
-        self.joueur_actif = 1 # joueur actif
+        """Initializes the game with a list of players and an initially empty backlog"""
+        self.joueurs = [] # player list
+        self.backlogs = [] # backlog list
+        self.joueur_actif = 1 # active player
         
         
-    ######## Méthodes ########
+    ######## Methods ########
     
-    ##### Méthodes liées aux joueurs #####
+    ##### Methods linked to the player #####
     def get_joueurs(self):
-        """Retourne la liste des joueurs"""
-        return [joueur.nom for joueur in self.joueurs]  # getter liste des joueurs
+        """Returns the list of players"""
+        return [joueur.nom for joueur in self.joueurs]  # getter player list 
 
     def ajouter_joueur(self, joueur):
-        """Ajoute un joueur à la liste des joueurs"""
-        self.joueurs.append(joueur)  # setter liste des joueurs
+        """Adds a player to the list of players"""
+        self.joueurs.append(joueur)  # setter player list
     
     def set_joueur_actif(self, value):
-        """Définit le joueur actif"""
-        self.joueur_actif = value  # setter joueur actif
+        """Sets the active player"""
+        self.joueur_actif = value  # setter active player
 
     def get_joueur_actif(self):
-        """Retourne le joueur actif"""
-        return self.joueur_actif  # getter joueur actif
+        """Returns the active player"""
+        return self.joueur_actif  # getter active player
     
     
-    ##### Méthodes liées au backlog #####
+    ##### Methods linked to the backlogs #####
     def get_backlogs(self):
-        """Retourne le backlog"""
+        """Returns the backlog"""
         return self.backlogs # getter backlog
     
     def ajouter_backlog(self, description):
-        """Ajoute un backlog avec une description donnée."""
-        # Créer un nouvel élément de backlog
+        """Adds a backlog with a given description."""
+        # Create a new backlog item
         new_backlog_item = {
-            "description": description, # description du backlog
-            "difficulty": None, # None = pas de difficulté définie null dans le fichier json
+            "description": description, # description of the backlog
+            "difficulty": None, # None = no difficulty defined null in the json file
         }
-        self.backlogs.append(new_backlog_item) # Ajouter cet élément à la liste des backlogs
+        self.backlogs.append(new_backlog_item) # add this item to the backlog list
         
     def charger_backlog(self, fichier):
-        """Charge le backlog depuis un fichier json"""
+        """Loads the backlog from a json file"""
         with open(fichier, 'r') as f:
-            self.backlogs = json.load(f) # setter/initilialise le backlog
-
-
+            self.backlogs = json.load(f) # setter/initilialise the backlog
 
     def enregistrer_backlog(self, fichier): 
-        """Enregistre le backlog dans un fichier json"""
+        """Saves the backlog to a json file"""
         with open(fichier, 'w') as f:
-            json.dump(self.backlogs, f) # enregistre les nouveau backlogs dans le fichier json
+            json.dump(self.backlogs, f) # save the new backlogs to the json file
             
     def enregistrer_backlog_skipped(self, fichier):
-        """Enregistre les backlogs dans un fichier json et transforme les difficultés skipped en None"""
+        """Saves the backlogs to a json file and transforms the skipped difficulties into None"""
         for backlog in self.get_backlogs():
                 if backlog.get('difficulty') == 'Skipped':
                     backlog['difficulty'] = None
         self.enregistrer_backlog("Backlogs/backlog.json")        
-
                 
     def set_difficulty_backlog(self, difficulty):
-        """Définit la difficulté d'un backlog du premier backlog sans difficulté"""
-        for backlog in self.backlogs: # pour chaque backlog
-            if backlog['difficulty'] == None: # si backlog est sans difficulté
-                backlog['difficulty'] = difficulty # définit la difficulté du backlog
+        """Defines the difficulty of a backlog of the first backlog without difficulty"""
+        for backlog in self.backlogs: # for each backlog
+            if backlog['difficulty'] == None: # if the backlog has no difficulty
+                backlog['difficulty'] = difficulty # define the difficulty of the backlog
                 break
-    
-    
+    ##### End Methods linked to the backlogs #####
     
 
-
-    
-    ##### Méthodes liées a la recuperation des votes #####    
+    ##### Methods linked to the recovery of votes #####
     def get_all_votes(self):
+        """Returns all votes"""
         return [joueur.get_carte() for joueur in self.joueurs]    
     
     def get_numerical_votes(self):
-        """Retourne les votes numériques"""
+        """Returns the numeric votes"""
         votes = self.get_all_votes()
         return [int(vote) for vote in votes if vote.isdigit()] # Get only numeric votes
     
     def max_min_votes(self):
-        """Retourne le maximum et le minimum des votes"""
+        """Returns the maximum and minimum votes"""
         numeric_votes = self.get_numerical_votes() # Get only numeric votes
         max_vote = max(numeric_votes, default=None) # Get the maximum vote
         min_vote = min(numeric_votes, default=None) # Get the minimum vote 
         return max_vote, min_vote
-    ##### end Méthodes liées a la recuperation des votes #####
-        
-    ##### Méthodes liées au calcul de la difficulté #####    
+    ##### End Methods linked to the recovery of votes #####
+    
+    ##### Methods linked to the calculation of the difficulty #####
     def medianne(self, liste):
-        """Calcule la médiane d'une liste de valeurs"""
-        liste.sort() # trier la liste
-        if len(liste) % 2 == 0: # si la liste est paire
-            return (liste[len(liste) // 2] + liste[len(liste) // 2 - 1]) / 2 # retourne la moyenne des deux valeurs du milieu
+        """Calculates the median of a list of values"""
+        liste.sort() # sort the list
+        if len(liste) % 2 == 0: #   if the list is even
+            return (liste[len(liste) // 2] + liste[len(liste) // 2 - 1]) / 2 #  return the average of the two values in the middle
         else:
-            return liste[len(liste) // 2] # retourne la valeur du milieu
+            return liste[len(liste) // 2] #  return the value in the middle
 
     def moyenne(self, liste):
-        """Calcule la moyenne d'une liste de valeurs"""
+        """Calculates the average of a list of values"""
         return sum(liste) / len(liste)
+    ##### End Methods linked to the calculation of the difficulty #####
+    
+# Code by Adjame Tellier-Rozen (ROZEN)
