@@ -26,7 +26,7 @@ class Board :
             elif self.visual.rules_menu:
                 self.rules_menu_loop()
             elif self.visual.load_menu:
-                self.visual.load_menu_loop()
+                self.load_menu_loop()
             elif self.visual.start_menu:
                 self.start_menu_loop()
             elif self.visual.show_result:
@@ -112,6 +112,7 @@ class Board :
             pygame.display.flip() # Update the screen
             
             
+            
     def start_menu_loop(self):
         """ Loop for the start menu """
         small_text = pygame.font.Font("freesansbold.ttf", 20) # Define font
@@ -131,7 +132,7 @@ class Board :
         else:
             self.visual.change_state("show_result") # change the state to show result
         if self.visual.draw_button_general("Go", self.visual.button_start_x, self.visual.screen_height // 2 + 50, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN): # if the go button is clicked
-            self.visual.vote_menu() # go to the vote menu
+            self.vote_menu() # go to the vote menu
         if self.visual.draw_button_general("Back to main menu", self.visual.button_start_x, self.visual.screen_height - self.visual.button_height - 10, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN):
             #enregistrer le backlog dans un fichier json
             self.visual.jeu.enregistrer_backlog("Backlogs/backlog.json") # save the backlogs in a json file
@@ -154,9 +155,6 @@ class Board :
                 continue
             # Define offset between boxes
             box_offset = 10  # Space between boxes
-            # Prepare to detect extreme values
-            
-            # votes = self.visual.jeu.get_votes() # Get all votes
             numeric_votes = self.visual.jeu.get_numerical_votes() # Get only numeric votes
             max_vote, min_vote = self.visual.jeu.max_min_votes() # Get the maximum and minimum votes
 
@@ -172,88 +170,154 @@ class Board :
             for i, joueur in enumerate(self.visual.jeu.joueurs): # for each player
                 vote = joueur.get_carte() # get the vote of the player
                 vote_box_x = vote_box_start_x + i * (vote_box_width + box_offset) # X position of the box
-               
-
                 # Determine color based on vote value
-                if vote.isdigit() and (int(vote) == max_vote or int(vote) == min_vote) and max_vote != min_vote: # If the vote is a number and it is the maximum or minimum vote
-                    box_color = self.visual.RED  # Red for extreme values
-                elif vote in ["?", "cafe"]: # If the vote is a question mark or coffee
-                    box_color = self.visual.BLUE   #pygame.Color('blue')  # Blue for "?" or "coffee"
-                else:
-                    box_color = self.visual.WHITE  # Default color
-
+                box_color = self.visual.vote_color(vote, max_vote, min_vote) # Determine color based on vote value
                 self.visual.draw_box(vote_box_x, vote_box_y, vote_box_width, vote_box_height, box_color, vote) # Draw the box with the vote value
                 
             # Handling game rules and navigation buttons 
             if self.visual.draw_button_general("Back to main menu", self.visual.button_start_x, self.visual.screen_height - 120, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN): # if the back to main menu button is clicked
                 self.visual.change_state("main_menu") # change the state to main menu
                 break
-            
-        
             all_votes = self.visual.jeu.get_all_votes() # Get all votes
-
             # the coffee as priority over everything
             if 'cafe' in all_votes: # If the coffee card is in the votes
-                for backlog in self.visual.jeu.get_backlogs(): # for each backlog
-                    if backlog.get('difficulty') == 'Skipped': # if the backlog has a difficulty value of skipped
-                        backlog['difficulty'] = None # set the difficulty value to None (default value)
-                self.visual.jeu.enregistrer_backlog("Backlogs/backlog.json") # save the backlogs in a json file
+                self.visual.cafe_vote() # do the cafe instructions
                 # wait 1 second 
                 pygame.time.wait(1000) # Wait 1 second before going back to the main menu
                 self.visual.change_state("main_menu") # change the state to main menu
                 break
-            
             # the ? as priority over everything except the coffee
             elif '?' in all_votes: # If the question mark card is in the votes
-                if self.visual.draw_button_general("Skip this backlog", self.visual.button_start_x, self.visual.screen_height - 200, self.visual.button_width, self.visual.button_height, self.visual.GREY,self.visual.GREEN):    
-                    self.visual.jeu.set_difficulty_backlog('Skipped')  # Mark current backlog as skipped
-                    self.visual.jeu.set_joueur_actif(1)  # Reset active player for next backlog
-                    self.visual.change_state("start_menu") # change the state to start menu
-                    break
+                self.visual.question_mark_vote() # do the question mark instructions
                 break
-            
             elif self.visual.medianne_clicked or self.visual.moyenne_clicked : # If the medianne or moyenne button is clicked
-                numeric_votes = [int(vote) for vote in all_votes if vote.isdigit()] # Get only numeric votes
                 if self.visual.medianne_clicked: # If the medianne button is clicked
-                    if self.visual.draw_button_general("Validate votes", self.visual.button_start_x, self.visual.screen_height - 200, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN):                    
-                        medianne = self.visual.jeu.medianne(numeric_votes) # Calculate the medianne
-                        self.visual.jeu.set_difficulty_backlog(medianne)  # Set the difficulty of the backlog to the medianne
-                        self.visual.jeu.set_joueur_actif(1) # Reset active player for next backlog go back to the first player
-                        self.visual.change_state("start_menu") # change the state to start menu
-                        break
+                    self.visual.medianne_vote() # do the moyenne instructions
                     break
-                
                 elif self.visual.moyenne_clicked: # If the moyenne button is clicked         
-                    if self.visual.draw_button_general("Validate votes", self.visual.button_start_x, self.visual.screen_height - 200, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN):
-                        moyenne = int(sum(numeric_votes) / len(numeric_votes)) # Calculate the moyenne   
-                        self.visual.jeu.set_difficulty_backlog(moyenne) # Set the difficulty of the backlog to the moyenne
-                        self.visual.jeu.set_joueur_actif(1) # Reset active player for next backlog go back to the first player
-                        self.visual.change_state("start_menu") # change the state to start menu
-                        break
-                    break
-                    
-            
+                    self.visual.moyenne_vote() # do the medianne instructions
+                    break        
             elif self.visual.strictes_clicked: # If the strictes button is clicked
                 if len(set(numeric_votes)) == 1: # If all votes are the same
-                    if self.visual.draw_button_general("Validate votes", self.visual.button_start_x, self.visual.screen_height - 200, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN):    
-                        self.visual.jeu.set_difficulty_backlog(all_votes[0]) # Set the difficulty of the backlog to the first vote
-                        self.visual.jeu.set_joueur_actif(1) # Reset active player for next backlog go back to the first player
-                        self.visual.change_state("start_menu") # change the state to start menu
-                        break
+                    self.visual.strictes_vote_egaux(numeric_votes,all_votes) # do the strictes instructions
                     break
                 else:
-                    if self.visual.draw_button_general("Restart vote", self.visual.button_start_x, self.visual.screen_height - 200, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN):
-                        self.visual.jeu.set_joueur_actif(1) # Reset active player for next backlog go back to the first player
-                        self.visual.change_state("start_menu") # change the state to start menu
-                        break
-                    break
-                
+                    self.visual.strictes_vote_diff(numeric_votes,all_votes)
+                    break 
             else:
                 self.visual.change_state("start_menu") # change the state to main menu
-                break
-                    
+                break      
             # Update the display
-            pygame.display.update()
-            
+            pygame.display.update()       
             for event in pygame.event.get(): # Check for events
                 self.visual.check_for_quit(event) # Check if the user wants to quit
+                
+                
+                
+                
+    def load_menu_loop(self):
+        """Loop for the load menu"""
+        # Text input box properties
+        #wait 1 second
+        pygame.time.wait(100) # so it doesn't register the click on the load game button as a click on the start button
+        input_box = pygame.Rect(400, 225, 140, 40)  # x, y, width, height
+        color_inactive = self.visual.BLUE # color of the input box when it is not clicked
+        color_active = self.visual.GREY # color of the input box when it is clicked
+        color = color_inactive # default color of the input box
+        active = False # default state of the input box
+        text = '' # default text of the input box
+        font = pygame.font.Font(None, 32) # font of the input box
+
+        players = []  # List to store player names
+        loop_keyboard = True # Boolean to keep the loop running
+        file_path = None # default file path
+        
+        while loop_keyboard: # while the loop is running
+            for event in pygame.event.get(): # Check for events
+                self.visual.check_for_quit(event) # Check if the user wants to quit
+                active,color = self.visual.input_box_toggle(event, input_box, active, color, color_active, color_inactive) # toggle the input box
+                
+                #couldn't put it in the visual class because of the text variable #!!!!!!
+                if event.type == pygame.KEYDOWN:
+                    if active:
+                        if event.key == pygame.K_RETURN:
+                            self.visual.jeu.ajouter_joueur(Joueur(text))
+                            text = ''  # Clear the text box after adding
+                        elif event.key == pygame.K_BACKSPACE:
+                            text = text[:-1] # Remove the last character from the text box
+                        else:
+                            text += event.unicode # Add the entered character to the text box
+                # end couldn't put it in the visual class because of the text variable #!!!!!!
+                
+            # Render the current text.
+            txt_surface = font.render(text, True, color)
+            # Resize the box if the text is too long.
+            width = max(200, txt_surface.get_width() + 10)
+            input_box.w = width
+            # Drawing the screen and buttons
+            self.visual.screen.fill(self.visual.WHITE) # Fill screen with white (background)
+            if file_path == None: # if no file is selected
+                if self.visual.draw_button_general("Load Game (none)", self.visual.button_start_x, self.visual.button_start_y,self.visual.button_width, self.visual.button_height, self.visual.GREY,self.visual.GREEN): # if the load game button is clicked
+                    ## open file and load it in a variable
+                    file_path = self.visual.open_file_dialog()
+                    if file_path:
+                        # load and process the game data from the selected file
+                        self.visual.jeu.charger_backlog(file_path) 
+                    else:
+                        file_path = None # If no file is selected, set file_path to None
+            else:
+                if self.visual.draw_button_general("Load Game (done)", self.visual.button_start_x, self.visual.button_start_y, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.DARK_GREEN): # if the load game button is clicked
+                    ## open file from your computer and load it in a variable
+                    file_path = self.visual.open_file_dialog()
+                    if file_path:
+                        # Here, you can call your method to load and process the game data from the selected file
+                        self.visual.jeu.charger_backlog(file_path) 
+                    else:
+                        file_path = None  # If no file is selected, set file_path to None
+ 
+            if self.visual.draw_button_general("Start", self.visual.button_start_x, self.visual.button_start_y + 2 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.DARK_GREEN): # if the start button is clicked
+                if len(self.visual.jeu.joueurs) > 0 and file_path != None: # if there is at least one player and a file is selected
+                    self.visual.change_state("start_menu") # change the state to start menu
+                    loop_keyboard = False # stop the loop
+                    break
+                if len(self.visual.jeu.joueurs) > 0: # if there is at least one player but no file is selected
+                    self.visual.change_state("createBacklog_menu") # change the state to create backlog menu
+                    loop_keyboard = False # stop the loop
+                    break
+            if self.visual.draw_button_general("Back to main menu", self.visual.button_start_x, self.visual.button_start_y + 3 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN): # if the back to main menu button is clicked    
+                self.visual.change_state("main_menu") # change the state to main menu
+                loop_keyboard = False # stop the loop
+                break
+                
+            # Add player text
+            self.visual.screen.blit(font.render("Add Player :", True, self.visual.BLACK), (self.visual.button_start_x-50, self.visual.button_start_y + self.visual.button_gap+15))    
+            # at the bottom of the screen, display the list of players
+            self.visual.screen.blit(font.render("Players :", True, self.visual.BLACK), (self.visual.button_start_x-50, self.visual.button_start_y + 4*self.visual.button_gap+15))
+            # Display the list of players
+            self.visual.display_players_list()         
+            # Blit the text box
+            self.visual.screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5)) # Blit the text.
+            pygame.draw.rect(self.visual.screen, color, input_box, 2) # Blit the rect.
+            pygame.display.update() # Update the screen
+
+
+    def vote_menu(self):
+        """Loop for the vote menu"""
+        clicked_vote = False  # Boolean to keep the loop running
+        while not clicked_vote:  # while the loop is running
+            self.visual.screen.fill(self.visual.DARK_GREEN)  # Fill screen with dark green (background)
+            # Get the first backlog description without a difficulty value
+            description = self.visual.check_if_all_backlogs_have_difficulty()
+            # Use draw_box to display the backlog description
+            self.visual.draw_box(0, 0, self.visual.screen_width, 100, self.visual.WHITE, description, font_size=20)
+            # Display the cards
+            clicked_vote = self.visual.display_cards_to_vote_screens(clicked_vote) # Display the cards and check if a card is clicked
+
+            pygame.display.update() # Update the screen
+            for event in pygame.event.get(): # Check for events
+                self.visual.check_for_quit(event)
+
+        # After voting, you might want to go back to the start menu or handle the next action
+        self.visual.jeu.set_joueur_actif(self.visual.jeu.get_joueur_actif() + 1) # set the active player to the next player
+        self.visual.change_state("start_menu")
+        

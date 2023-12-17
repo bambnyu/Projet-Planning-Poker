@@ -24,7 +24,7 @@ class Jeu:
     ##### Méthodes liées aux joueurs #####
     def get_joueurs(self):
         """Retourne la liste des joueurs"""
-        return [joueur.get_nom() for joueur in self.joueurs]  # getter liste des joueurs
+        return [joueur.nom for joueur in self.joueurs]  # getter liste des joueurs
 
     def ajouter_joueur(self, joueur):
         """Ajoute un joueur à la liste des joueurs"""
@@ -80,6 +80,11 @@ class Jeu:
                 backlog['difficulty'] = difficulty # définit la difficulté du backlog
                 break
     
+    
+    
+
+
+    
     ##### Méthodes liées a la recuperation des votes #####    
     def get_all_votes(self):
         return [joueur.get_carte() for joueur in self.joueurs]    
@@ -105,3 +110,7 @@ class Jeu:
             return (liste[len(liste) // 2] + liste[len(liste) // 2 - 1]) / 2 # retourne la moyenne des deux valeurs du milieu
         else:
             return liste[len(liste) // 2] # retourne la valeur du milieu
+
+    def moyenne(self, liste):
+        """Calcule la moyenne d'une liste de valeurs"""
+        return sum(liste) / len(liste)
