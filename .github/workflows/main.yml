@@ -27,6 +27,6 @@ jobs:
 
     - name: Run tests and generate HTML report
       run: |
-        pytest ..\Classes\Test\test.py
+        pytest ..\Projet-Planning-Poker\Classes\Test\test.py
       env:
         CI: true
