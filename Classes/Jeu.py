@@ -108,7 +108,14 @@ class Jeu:
 
     def moyenne(self, liste):
         """Calculates the average of a list of values"""
-        return sum(liste) / len(liste)
+        if not liste:  # Check if the list is empty
+            return 0
+        sum_of_elements = sum(liste)
+        length_of_list = len(liste)
+        # Calculate the average and round up
+        average = -(-sum_of_elements // length_of_list)
+
+        return average
     ##### End Methods linked to the calculation of the difficulty #####
     
 # Code by Adjame Tellier-Rozen (ROZEN)

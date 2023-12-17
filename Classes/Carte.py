@@ -3,7 +3,7 @@ class Carte:
     """Class that represents a playing card"""
 
     # Constructor and attributes
-    def __init__(self, valeur, image):
+    def __init__(self, valeur):
         """Initializes a card with a value"""
         self.valeur = valeur
 

@@ -7,7 +7,7 @@ class Joueur:
     def __init__(self, nom):
         """Initializes a player with a name and a card"""
         self.nom = nom
-        self.carte = Carte("Aucune", "Aucune")
+        self.carte = Carte("Aucune")
         
     # Methods
     def set_carte(self, carte):
