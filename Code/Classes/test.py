@@ -10,7 +10,7 @@ from Board import *
 
 # Unit tests management with pytest
 # pip install pytest
-# to launch it, type pytest Classes/Test/test.py in the terminal
+# to launch it, type pytest Code/Classes/test.py in the terminal
 # to launch a specific test, type pytest -k <test name> in the terminal
 
 
