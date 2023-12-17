@@ -68,7 +68,7 @@ class Jeu:
         for backlog in self.get_backlogs():
                 if backlog.get('difficulty') == 'Skipped':
                     backlog['difficulty'] = None
-        self.enregistrer_backlog("Backlogs/backlog.json")        
+        self.enregistrer_backlog("Code/Backlogs/backlog.json")        
                 
     def set_difficulty_backlog(self, difficulty):
         """Defines the difficulty of a backlog of the first backlog without difficulty"""

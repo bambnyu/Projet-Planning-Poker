@@ -310,7 +310,7 @@ class Visual:
         for backlog in self.jeu.get_backlogs(): # for each backlog
                 if backlog.get('difficulty') == 'Skipped': # if the backlog has a difficulty value of skipped
                     backlog['difficulty'] = None # set the difficulty value to None (default value)
-                self.jeu.enregistrer_backlog("Backlogs/backlog.json") # save the backlogs in a json file
+                self.jeu.enregistrer_backlog("Code/Backlogs/backlog.json") # save the backlogs in a json file
                 
     def question_mark_vote(self):
         """ question mark vote"""

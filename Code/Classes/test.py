@@ -72,15 +72,15 @@ def test_création_jeu():
     # Vérification de la méthode get_backlogs (non vide)
     assert jeu.get_backlogs() == jeu.backlogs
     # Vérification de la méthode charger_backlog
-    jeu.charger_backlog("Backlogs/backlog.json")
+    jeu.charger_backlog("Code/Backlogs/backlog.json")
     assert jeu.backlogs[0]['difficulty'] == "2"
     # Vérification de la méthode enregistrer_backlog
-    jeu.enregistrer_backlog("Backlogs/backlog.json")
-    jeu.charger_backlog("Backlogs/backlog.json")
+    jeu.enregistrer_backlog("Code/Backlogs/backlog.json")
+    jeu.charger_backlog("Code/Backlogs/backlog.json")
     assert jeu.backlogs[0]['difficulty'] == "2"
     # verification de la méthode enregistrer_backlog_skipped
-    jeu.enregistrer_backlog_skipped("Backlogs/backlog.json")
-    jeu.charger_backlog("Backlogs/backlog.json")
+    jeu.enregistrer_backlog_skipped("Code/Backlogs/backlog.json")
+    jeu.charger_backlog("Code/Backlogs/backlog.json")
     assert jeu.backlogs[0]['difficulty'] == "2"
     # Vérification de la méthode set_difficulty_backlog
     jeu.set_difficulty_backlog(None)

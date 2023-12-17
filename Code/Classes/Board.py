@@ -110,7 +110,7 @@ class Board :
             if self.visual.draw_button_general("Start Game", self.visual.button_start_x , self.visual.screen_height - 70, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.DARK_GREEN): # if the start button is clicked
                 # enregistrer le backlog dans un fichier json
                 if len(self.visual.jeu.backlogs)!=0: # if there is at least one backlog
-                    self.visual.jeu.enregistrer_backlog("Backlogs/backlog.json") # save the backlogs in a json file
+                    self.visual.jeu.enregistrer_backlog("Code/Backlogs/backlog.json") # save the backlogs in a json file
                     self.visual.change_state("start_menu") # change the state to start menu
                     break
                 else:
@@ -128,7 +128,7 @@ class Board :
         description =  self.visual.check_if_all_backlogs_have_difficulty() # check if all backlogs have difficulty values
         # Handle the case where all backlogs have difficulty values or there are no backlogs
         if description == "No backlogs available":
-            self.visual.jeu.enregistrer_backlog_skipped("Backlogs/backlog.json") # save the backlogs in a json file
+            self.visual.jeu.enregistrer_backlog_skipped("Code/Backlogs/backlog.json") # save the backlogs in a json file
             pygame.time.wait(1000)  # Wait 1 second before going back to the main menu
             self.visual.change_state("main_menu")  # Change state back to main menu
         if self.visual.jeu.get_joueur_actif() <= len(self.visual.jeu.get_joueurs()): # if there are still players to vote
@@ -142,7 +142,7 @@ class Board :
             self.vote_menu() # go to the vote menu
         if self.visual.draw_button_general("Back to main menu", self.visual.button_start_x, self.visual.screen_height - self.visual.button_height - 10, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN):
             #enregistrer le backlog dans un fichier json
-            self.visual.jeu.enregistrer_backlog("Backlogs/backlog.json") # save the backlogs in a json file
+            self.visual.jeu.enregistrer_backlog("Code/Backlogs/backlog.json") # save the backlogs in a json file
             self.visual.start_menu = False # Change state back to main menu
             self.visual.main_menu = True  # Change state back to main menu
             
