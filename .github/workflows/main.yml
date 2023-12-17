@@ -27,7 +27,7 @@ jobs:
 
     - name: Run tests and generate HTML report
       run: |
-        ls ../Classes/test.py
+        ls Code/Classes/test.py
       
       env:
         CI: true
