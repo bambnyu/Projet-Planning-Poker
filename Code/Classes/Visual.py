@@ -162,15 +162,15 @@ class Visual:
         """Display the description of the rule choosen"""
 
         if rule_choosen == "strictes":
-            description = "Les joueurs votent pour la tache actuelle. Ils revelent leur votes en meme temps. Si les votes sont tous identiques la valeur est enregistre sinon un nouveau vote est lancer apres une discussion entre les 2 valeurs les plus extremes.\n"
+            description = "Players vote for the current task and reveal their votes simultaneously. If all votes are identical, the value is recorded. If not, a new vote is initiated after a discussion between the two most extreme values.\n"
         elif rule_choosen == "moyenne":
-            description = "Les joueurs votent pour la tache actuelle. Ils revelent leur votes en meme temps. La valeur enregistre est la moyenne des votes"
+            description = "Players vote for the current task and reveal their votes at the same time. The recorded value is the average of the votes."
         elif rule_choosen == "medianne":
-            description = "Les joueurs votent pour la tache actuelle. Ils revelent leur votes en meme temps. La valeur enregistre est la mediane des votes"
+            description = "Players vote for the current task and reveal their votes simultaneously. The recorded value is the median of the votes."
         elif rule_choosen == "majorite_abs":
-            description = "Les joueurs votent pour la tache actuelle. Ils revelent leur votes en meme temps. La valeur enregistre est la valeur qui a plus de la moitie des votes"
+            description = "Players vote for the current task and reveal their votes at the same time. The recorded value is the one that receives more than half of the votes."
         elif rule_choosen == "majorite_rel":
-            description = "Les joueurs votent pour la tache actuelle. Ils revelent leur votes en meme temps. La valeur enregistre est la valeur qui a le plus de vote.es"
+            description = "Players vote for the current task and reveal their votes simultaneously. The recorded value is the one with the most votes."
         
         else:
                 description = "Error"

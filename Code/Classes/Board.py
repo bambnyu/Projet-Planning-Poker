@@ -61,15 +61,15 @@ class Board :
         elif self.visual.majorite_rel_clicked: # if the majorite relative button is clicked
             self.visual.display_rule_description("majorite_rel")
                 
-        if self.visual.draw_button_general("Strictes", self.visual.button_start_x, self.visual.button_start_y, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN, self.visual.strictes_clicked): # if the strictes button is clicked
+        if self.visual.draw_button_general("Strict", self.visual.button_start_x, self.visual.button_start_y, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN, self.visual.strictes_clicked): # if the strictes button is clicked
             self.visual.change_difficulty("strictes") # change the difficulty to strictes
-        if self.visual.draw_button_general("Moyenne", self.visual.button_start_x, self.visual.button_start_y + self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN, self.visual.moyenne_clicked): # if the moyenne button is clicked   
+        if self.visual.draw_button_general("Average", self.visual.button_start_x, self.visual.button_start_y + self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN, self.visual.moyenne_clicked): # if the moyenne button is clicked   
             self.visual.change_difficulty("moyenne") # change the difficulty to moyenne
-        if self.visual.draw_button_general("Medianne", self.visual.button_start_x, self.visual.button_start_y + 2 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN,self.visual.medianne_clicked): # if the medianne button is clicked
+        if self.visual.draw_button_general("Median", self.visual.button_start_x, self.visual.button_start_y + 2 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN,self.visual.medianne_clicked): # if the medianne button is clicked
             self.visual.change_difficulty("medianne") # change the difficulty to medianne
-        if self.visual.draw_button_general("Majorité absolue", self.visual.button_start_x, self.visual.button_start_y + 3 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN, self.visual.majorite_abs_clicked): # if the majorite absolue button is clicked
+        if self.visual.draw_button_general("Absolute majority", self.visual.button_start_x, self.visual.button_start_y + 3 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN, self.visual.majorite_abs_clicked): # if the majorite absolue button is clicked
             self.visual.change_difficulty("majorite_abs") # change the difficulty to majorite absolue
-        if self.visual.draw_button_general("Majorité relative", self.visual.button_start_x, self.visual.button_start_y + 4 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN, self.visual.majorite_rel_clicked): # if the majorite relative button is clicked
+        if self.visual.draw_button_general("Relative majority", self.visual.button_start_x, self.visual.button_start_y + 4 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN, self.visual.majorite_rel_clicked): # if the majorite relative button is clicked
             self.visual.change_difficulty("majorite_rel") # change the difficulty to majorite relative
         if self.visual.draw_button_general("Back to main menu", self.visual.button_start_x, self.visual.button_start_y + 5 * self.visual.button_gap, self.visual.button_width, self.visual.button_height, self.visual.GREY, self.visual.GREEN): # if the back to main menu button is clicked
             self.visual.change_state("main_menu") # change the state to main menu
