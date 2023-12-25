@@ -34,14 +34,14 @@ pip install pygame tkinter numpy
 ```
 Clonez le dépôt ou téléchargez les fichiers du projet.
 ## Utilisation
-Pour lancer le jeu, naviguez jusqu'au dossier du projet dans votre terminal (dans le dossier Code/Classes) et exécutez:
+Pour lancer le jeu, naviguez jusqu'au dossier du projet dans votre terminal (dans le dossier `Code/Classes`) et exécutez:
 ```
 python main.py
 ```
 Suivez les instructions à l'écran pour interagir avec le jeu.
 
 Pour créer des tests unitaire nous avons choisi [pytest](https://docs.pytest.org/en/7.4.x/).
-Pour lancer les test naviguez jusqu'au dossier du projet dans votre terminal (dans le dossier Code/Classes) et exécutez:
+Pour lancer les test naviguez jusqu'au dossier du projet dans votre terminal (dans le dossier `Code/Classes`) et exécutez:
 ```
 type pytest Code/Classes/test.py`
 ```
@@ -60,6 +60,7 @@ Dans cet écran vous pouvez choisir le type de règle avec lequel vous souhaitez
 - médianne
 - majorité absolue
 - majorité relative
+  
 La règle par défaut est la stricte, car elle est la plus couramment utilisée et la plus présentée en cours.
 
 ### Ecran de chargement
