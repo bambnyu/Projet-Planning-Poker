@@ -31,20 +31,29 @@ Contient les tests unitaires pour le projet, en utilisant pytest pour valider le
 ## Configuration et installation
 Assurez-vous que Python est installé sur votre système.
 Installez les dépendances nécessaires, notamment pygame et tkinter.
-`pip install pygame`
-`pip install tkinter`
-`pip install numpy`
+```
+pip install pygame
+pip install tkinter
+pip install numpy
+```
 Clonez le dépôt ou téléchargez les fichiers du projet.
 Utilisation
 Pour lancer le jeu, naviguez jusqu'au dossier du projet dans votre terminal (dans le dossier Code/Classes) et exécutez:
-`python main.py`
+```
+python main.py
+```
 Suivez les instructions à l'écran pour interagir avec le jeu.
 
 Pour lancer les test unitaires naviguez jusqu'au dossier du projet dans votre terminal (dans le dossier Code/Classes) et exécutez:
-`type pytest Code/Classes/test.py`
+```
+type pytest Code/Classes/test.py`
+```
 Pour lancer un test spécifique exécutez:
-`pytest -k <test name>`
+```
+pytest -k <test name>
+```
 
 Contribution
 Les contributions sont actuellement bloquées car il s'agit d'un projet scolaire. Les contributions pourront être ouverte suite à l'évaluation
 et dans ce cas veuillez suivre les conventions de codage standard et fournir des tests pour les nouvelles fonctionnalités.
+
