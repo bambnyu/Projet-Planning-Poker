@@ -84,6 +84,6 @@ Si un vote `cafe` est fait, on enregistre les anciens backlogs et on quitte la p
 ## Contribution
 Les contributions sont actuellement bloquées car il s'agit d'un projet scolaire. Elles pourront être ouvertes suite à l'évaluation. Dans ce cas, veuillez suivre les conventions de codage standard et fournir des tests pour les nouvelles fonctionnalités.
 
-## Créateur
+## Auteur
 Adjamé Tellier-Rozen (ROZEN) M1 Informatique
 
