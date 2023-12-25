@@ -33,7 +33,7 @@ Installez les dépendances nécessaires, notamment [Pygame](https://www.pygame.o
 pip install pygame tkinter numpy
 ```
 Clonez le dépôt ou téléchargez les fichiers du projet.
-## Utilisation
+## Utilisation / How to Use
 Pour lancer le jeu, naviguez jusqu'au dossier du projet dans votre terminal (dans le dossier `Code/Classes`) et exécutez:
 ```
 python main.py
@@ -81,7 +81,9 @@ Si un vote `?` est fait, le vote est sauté et on passe à la tâche suivante.
 Si un vote `cafe` est fait, on enregistre les anciens backlogs et on quitte la partie. Qui pourra être reprise plus tard si on rouvre le fichier.
 
 
-Contribution
+## Contribution
 Les contributions sont actuellement bloquées car il s'agit d'un projet scolaire. Elles pourront être ouvertes suite à l'évaluation. Dans ce cas, veuillez suivre les conventions de codage standard et fournir des tests pour les nouvelles fonctionnalités.
 
+## Créateur
+Adjamé Tellier-Rozen (ROZEN) M1 Informatique
 
